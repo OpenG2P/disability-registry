@@ -1,0 +1,30 @@
+# Mirror of the `checks` job in .gitlab-ci.yml, for the GitHub mirror of this
+# repo. Builds and publishing happen on GitLab; this only runs the guards.
+name: checks
+
+on:
+  push:
+    branches: [develop, main, "1.*"]
+  pull_request:
+
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --no-cache-dir pytest pyyaml
+      - name: Metadata and pin guards
+        run: pytest test/test_rp_pin_lockstep.py test/test_metadata_consistency.py -v
+      - name: Generated files are up to date
+        run: |
+          ./scripts/generate-code-lists.py --check
+          ./scripts/generate-translations.py --check
+      - name: Helm lint
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          helm dependency update ./helm/openg2p-disability-registry
+          helm lint ./helm/openg2p-disability-registry
+          helm template dr ./helm/openg2p-disability-registry > /dev/null

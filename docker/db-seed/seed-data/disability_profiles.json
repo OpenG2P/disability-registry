@@ -1,0 +1,315 @@
+{
+  "_comment": [
+    "Sample-data ARCHETYPES for the Disability Registry.",
+    "",
+    "These are not per-person fixtures. load_sample_data.py picks one archetype",
+    "per registered person deterministically (hash of the person's id), so the",
+    "sample set is reproducible, internally consistent, and independent of how",
+    "many people the demography source happens to contain.",
+    "",
+    "Writing them as archetypes rather than rows is what keeps the person's",
+    "denormalised unmet_support_needs_count honest: the loader derives it from",
+    "the support rows it actually created, so the summary can never disagree",
+    "with the detail the way a hand-written fixture set eventually does.",
+    "",
+    "`weight` sets how often an archetype is drawn. The distribution is loosely",
+    "modelled on WHO World Report on Disability severity shares — most disability",
+    "is mild-to-moderate, a small share is severe — so charts built on this data",
+    "have a plausible shape rather than a uniform one.",
+    "",
+    "TEST_ is deliberately absent: these are demo records, not sanity fixtures.",
+    "The sanity suite injects its own record (test/sanity/sanity/data_seed.py)."
+  ],
+  "profiles": [
+    {
+      "code": "MILD_VISION",
+      "weight": 18,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "MILD",
+        "support_needs_level": "INTERMITTENT_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "FAMILY_HOME",
+        "transport_requirement": "ACCESSIBLE_PUBLIC_TRANSPORT",
+        "legal_capacity_status": "FULL_CAPACITY",
+        "employment_status": "EMPLOYED",
+        "communication_needs": ["LARGE_PRINT"]
+      },
+      "disability_details": [
+        {"impairment_type": "VISUAL", "impairment_level": "SOME_DIFFICULTY",
+         "impairment_cause": "AGEING", "age_onset_band": "OLD_AGE_60_PLUS",
+         "is_primary_impairment": true, "assessment_method": "CLINICAL_ASSESSMENT"}
+      ],
+      "assistive_technology": [
+        {"assistive_technology_type": "SPECTACLES", "support_status": "RECEIVED",
+         "provision_source": "GOVERNMENT_PROGRAM"}
+      ],
+      "medical_care": [
+        {"medical_care_type": "REGULAR_SPECIALIST_REVIEW", "support_status": "RECEIVING",
+         "frequency": "MONTHLY", "is_covered_by_insurance": true}
+      ]
+    },
+    {
+      "code": "MODERATE_HEARING",
+      "weight": 15,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "MODERATE",
+        "support_needs_level": "LIMITED_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "FAMILY_HOME",
+        "transport_requirement": "NONE",
+        "legal_capacity_status": "FULL_CAPACITY",
+        "employment_status": "SELF_EMPLOYED",
+        "communication_needs": ["SIGN_LANGUAGE", "CAPTIONING"]
+      },
+      "disability_details": [
+        {"impairment_type": "HEARING", "impairment_level": "A_LOT_OF_DIFFICULTY",
+         "impairment_cause": "ILLNESS", "age_onset_band": "CHILDHOOD_6_12",
+         "is_primary_impairment": true,
+         "assessment_method": "WASHINGTON_GROUP_SHORT_SET"}
+      ],
+      "assistive_technology": [
+        {"assistive_technology_type": "HEARING_AIDS", "support_status": "REQUIRED",
+         "provision_source": "GOVERNMENT_PROGRAM"}
+      ],
+      "human_assistance": [
+        {"assistance_type": "SIGN_LANGUAGE_INTERPRETATION", "support_status": "REQUIRED",
+         "frequency": "AS_NEEDED", "is_paid_caregiver": true}
+      ]
+    },
+    {
+      "code": "SEVERE_MOBILITY",
+      "weight": 14,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "SEVERE",
+        "support_needs_level": "EXTENSIVE_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "FAMILY_HOME",
+        "transport_requirement": "WHEELCHAIR_ACCESSIBLE_VEHICLE",
+        "legal_capacity_status": "FULL_CAPACITY",
+        "employment_status": "UNEMPLOYED_SEEKING",
+        "communication_needs": ["NONE"]
+      },
+      "disability_details": [
+        {"impairment_type": "PHYSICAL_MOBILITY", "impairment_level": "CANNOT_DO_AT_ALL",
+         "impairment_cause": "ROAD_ACCIDENT", "age_onset_band": "ADULTHOOD_18_59",
+         "is_primary_impairment": true, "assessment_method": "CLINICAL_ASSESSMENT"}
+      ],
+      "assistive_technology": [
+        {"assistive_technology_type": "MANUAL_WHEELCHAIR", "support_status": "RECEIVED",
+         "provision_source": "NGO"},
+        {"assistive_technology_type": "PRESSURE_RELIEF_CUSHIONS", "support_status": "REQUIRED",
+         "provision_source": "GOVERNMENT_PROGRAM"}
+      ],
+      "human_assistance": [
+        {"assistance_type": "PERSONAL_CARE", "support_status": "RECEIVING",
+         "frequency": "DAILY", "caregiver_relationship": "SPOUSE",
+         "is_paid_caregiver": false, "hours_per_week": 28}
+      ],
+      "housing_support": [
+        {"housing_support_type": "RAMP_INSTALLATION", "support_status": "REQUIRED",
+         "provision_source": "GOVERNMENT_PROGRAM"}
+      ],
+      "related_persons": [
+        {"relationship_type": "SPOUSE", "is_primary_caregiver": true,
+         "is_emergency_contact": true, "is_co_resident": true}
+      ],
+      "program_enrolments": [
+        {"program_name": "DISABILITY_ALLOWANCE", "enrolment_status": "ACTIVE"}
+      ]
+    },
+    {
+      "code": "CONGENITAL_INTELLECTUAL",
+      "weight": 12,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "SEVERE",
+        "support_needs_level": "PERVASIVE_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "FAMILY_HOME",
+        "transport_requirement": "ESCORTED_TRAVEL",
+        "legal_capacity_status": "SUPPORTED_DECISION_MAKING",
+        "guardian_required": true,
+        "employment_status": "SUPPORTED_EMPLOYMENT",
+        "communication_needs": ["EASY_READ", "PICTOGRAMS"]
+      },
+      "disability_details": [
+        {"impairment_type": "INTELLECTUAL", "impairment_level": "A_LOT_OF_DIFFICULTY",
+         "impairment_cause": "CONGENITAL", "age_onset_band": "AT_BIRTH",
+         "age_on_set": 0, "is_primary_impairment": true,
+         "assessment_method": "CLINICAL_ASSESSMENT"}
+      ],
+      "human_assistance": [
+        {"assistance_type": "SUPERVISION", "support_status": "RECEIVING",
+         "frequency": "PERMANENT", "caregiver_relationship": "PARENT",
+         "is_paid_caregiver": false, "hours_per_week": 60}
+      ],
+      "related_persons": [
+        {"relationship_type": "PARENT", "is_primary_caregiver": true,
+         "is_legal_guardian": true, "is_emergency_contact": true, "is_co_resident": true}
+      ],
+      "program_enrolments": [
+        {"program_name": "DISABILITY_ALLOWANCE", "enrolment_status": "ACTIVE"},
+        {"program_name": "CAREGIVER_ALLOWANCE", "enrolment_status": "APPLIED"}
+      ]
+    },
+    {
+      "code": "PSYCHOSOCIAL",
+      "weight": 12,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "MODERATE",
+        "support_needs_level": "INTERMITTENT_SUPPORT",
+        "self_id_disability": false,
+        "housing_type": "INDEPENDENT_HOME",
+        "transport_requirement": "NONE",
+        "legal_capacity_status": "FULL_CAPACITY",
+        "employment_status": "UNEMPLOYED_NOT_SEEKING",
+        "communication_needs": ["NONE"]
+      },
+      "disability_details": [
+        {"impairment_type": "PSYCHOSOCIAL", "impairment_level": "SOME_DIFFICULTY",
+         "impairment_cause": "ILLNESS", "age_onset_band": "ADULTHOOD_18_59",
+         "is_primary_impairment": true, "assessment_method": "WHODAS_2_0"}
+      ],
+      "medical_care": [
+        {"medical_care_type": "PSYCHIATRIC_CARE", "support_status": "RECEIVING",
+         "frequency": "MONTHLY", "is_covered_by_insurance": false},
+        {"medical_care_type": "MAINTENANCE_MEDICINE", "support_status": "PARTIALLY_RECEIVED",
+         "frequency": "DAILY", "is_covered_by_insurance": false}
+      ]
+    },
+    {
+      "code": "MULTIPLE_PROFOUND",
+      "weight": 8,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "PROFOUND",
+        "support_needs_level": "PERVASIVE_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "SUPPORTED_LIVING",
+        "transport_requirement": "AMBULANCE_TRANSPORT",
+        "legal_capacity_status": "PARTIAL_GUARDIANSHIP",
+        "guardian_required": true,
+        "employment_status": "UNABLE_TO_WORK",
+        "lives_alone": false,
+        "communication_needs": ["TACTILE_SIGNING", "INTERPRETER_REQUIRED"]
+      },
+      "disability_details": [
+        {"impairment_type": "DEAFBLIND", "impairment_level": "CANNOT_DO_AT_ALL",
+         "impairment_cause": "CONGENITAL", "age_onset_band": "AT_BIRTH",
+         "age_on_set": 0, "is_primary_impairment": true,
+         "assessment_method": "CLINICAL_ASSESSMENT"},
+        {"impairment_type": "PHYSICAL_MOBILITY", "impairment_level": "A_LOT_OF_DIFFICULTY",
+         "impairment_cause": "CONGENITAL", "age_onset_band": "AT_BIRTH",
+         "is_primary_impairment": false, "assessment_method": "CLINICAL_ASSESSMENT"}
+      ],
+      "assistive_technology": [
+        {"assistive_technology_type": "COMMUNICATION_BOARDS", "support_status": "REQUIRED",
+         "provision_source": "NGO"},
+        {"assistive_technology_type": "ELECTRIC_WHEELCHAIR", "support_status": "REQUIRED",
+         "provision_source": "GOVERNMENT_PROGRAM"}
+      ],
+      "human_assistance": [
+        {"assistance_type": "PERSONAL_CARE", "support_status": "RECEIVING",
+         "frequency": "PERMANENT", "caregiver_relationship": "PAID_CAREGIVER",
+         "is_paid_caregiver": true, "hours_per_week": 84}
+      ],
+      "medical_care": [
+        {"medical_care_type": "PHYSIOTHERAPY", "support_status": "REQUIRED",
+         "frequency": "WEEKLY", "is_covered_by_insurance": false}
+      ],
+      "animal_assistance": [
+        {"animal_assistance_type": "ALERT_DOG", "support_status": "REQUIRED"}
+      ],
+      "program_enrolments": [
+        {"program_name": "DISABILITY_ALLOWANCE", "enrolment_status": "ACTIVE"},
+        {"program_name": "REHABILITATION_SERVICES", "enrolment_status": "ACTIVE"}
+      ]
+    },
+    {
+      "code": "CONFLICT_AMPUTEE",
+      "weight": 7,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "SEVERE",
+        "support_needs_level": "LIMITED_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "TEMPORARY_SHELTER",
+        "transport_requirement": "ADAPTED_VEHICLE",
+        "legal_capacity_status": "FULL_CAPACITY",
+        "employment_status": "UNEMPLOYED_SEEKING",
+        "communication_needs": ["NONE"]
+      },
+      "disability_details": [
+        {"impairment_type": "PHYSICAL_MOBILITY", "impairment_level": "A_LOT_OF_DIFFICULTY",
+         "impairment_cause": "CONFLICT_VIOLENCE", "age_onset_band": "ADULTHOOD_18_59",
+         "is_primary_impairment": true, "assessment_method": "MEDICAL_CERTIFICATE"}
+      ],
+      "assistive_technology": [
+        {"assistive_technology_type": "PROSTHESES", "support_status": "REQUIRED",
+         "provision_source": "NGO"},
+        {"assistive_technology_type": "CRUTCHES", "support_status": "RECEIVED",
+         "provision_source": "NGO"}
+      ],
+      "housing_support": [
+        {"housing_support_type": "ACCESSIBLE_SOCIAL_HOUSING", "support_status": "REQUIRED",
+         "provision_source": "GOVERNMENT_PROGRAM"}
+      ],
+      "medical_care": [
+        {"medical_care_type": "WOUND_CARE", "support_status": "RECEIVING",
+         "frequency": "WEEKLY", "is_covered_by_insurance": false}
+      ]
+    },
+    {
+      "code": "WORK_ACCIDENT_CHRONIC",
+      "weight": 8,
+      "person": {
+        "disability_status": "ASSESSED_DISABLED",
+        "disability_status_level": "MODERATE",
+        "support_needs_level": "INTERMITTENT_SUPPORT",
+        "self_id_disability": true,
+        "housing_type": "INDEPENDENT_HOME",
+        "transport_requirement": "TRANSPORT_ALLOWANCE",
+        "legal_capacity_status": "FULL_CAPACITY",
+        "employment_status": "SHELTERED_EMPLOYMENT",
+        "communication_needs": ["NONE"]
+      },
+      "disability_details": [
+        {"impairment_type": "PHYSICAL_MOBILITY", "impairment_level": "SOME_DIFFICULTY",
+         "impairment_cause": "WORK_ACCIDENT", "age_onset_band": "ADULTHOOD_18_59",
+         "is_primary_impairment": true, "assessment_method": "MEDICAL_CERTIFICATE"}
+      ],
+      "assistive_technology": [
+        {"assistive_technology_type": "ORTHOSES", "support_status": "RECEIVED",
+         "provision_source": "INSURANCE"}
+      ],
+      "medical_care": [
+        {"medical_care_type": "PHYSIOTHERAPY", "support_status": "RECEIVING",
+         "frequency": "WEEKLY", "is_covered_by_insurance": true}
+      ],
+      "program_enrolments": [
+        {"program_name": "VOCATIONAL_TRAINING", "enrolment_status": "ACTIVE"}
+      ]
+    },
+    {
+      "code": "PENDING_ASSESSMENT",
+      "weight": 6,
+      "person": {
+        "disability_status": "PENDING_ASSESSMENT",
+        "self_id_disability": true,
+        "housing_type": "FAMILY_HOME",
+        "legal_capacity_status": "UNKNOWN",
+        "employment_status": "UNEMPLOYED_SEEKING",
+        "communication_needs": ["NONE"]
+      },
+      "disability_details": [
+        {"impairment_type": "OTHER", "impairment_level": "SOME_DIFFICULTY",
+         "impairment_cause": "UNKNOWN", "age_onset_band": "UNKNOWN",
+         "is_primary_impairment": true, "assessment_method": "SELF_REPORT"}
+      ]
+    }
+  ]
+}

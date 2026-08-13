@@ -1,0 +1,272 @@
+# Disability Registry — values overlay for the openg2p-registry chart.
+#
+# This chart deploys the openg2p-registry subchart (pinned in Chart.yaml, aliased
+# `registry`) with the overrides below, plus its own analytics jobs. Install:
+#
+#     helm dependency update ./helm/openg2p-disability-registry
+#     helm install dr ./helm/openg2p-disability-registry \
+#       --namespace dr --create-namespace \
+#       --set global.registryHostname=dr.example.org
+#
+# Two kinds of override:
+#   * global.*    — Helm propagates these to the subchart (and its subcharts).
+#   * registry.*  — values for the openg2p-registry subchart itself.
+# Everything not set here (all service wiring, keycloak/iam, db-seed machinery,
+# demo users, the sanity suite) is inherited from the subchart defaults.
+#
+# The defaults below are SANDBOX defaults — demo data on, sanity on. Phase 3
+# (Go to production) turns those off; see app-readme.md for the production set.
+
+# ── Globals (propagate to the openg2p-registry subchart) ──────────────────────
+global:
+  registryVariant: 'disability'
+  # Database wiring, mirroring openg2p-registry's own defaults. Declared here
+  # rather than inherited because a parent chart's templates cannot read a
+  # subchart's global defaults, and this chart's analytics jobs need them.
+  # Values set here propagate down, so parent and subchart stay in step — but
+  # they must be revisited if the subchart's naming scheme changes.
+  postgresqlHost: commons-postgresql
+  registryDB: '{{ printf "%s" .Release.Name | replace "-" "_" }}'
+  registryDBPort: 5432
+  registryDBUser: '{{ printf "%s_user" .Release.Name | replace "-" "_" }}'
+  registryDBSecret: '{{ .Release.Name }}'
+  registryDBUserPasswordKey: '{{ .Release.Name }}-db-user'
+  masterDataDB: 'master_data'
+  masterDataDBPort: 5432
+  masterDataDBUser: 'master_data_user'
+  masterDataDBSecret: 'master-data'
+  masterDataDBUserPasswordKey: 'master-data-db-user'
+  # Ingress host for this registry. Overrides the subchart's generic default.
+  registryHostname: '{{ .Release.Name }}.{{ .Release.Namespace }}.openg2p.org'
+
+# ── openg2p-registry subchart overrides ───────────────────────────────────────
+registry:
+  # Images built by this repo's CI (each FROM the matching openg2p-registry base
+  # image). CI rewrites these tags to the freshly built version (lockstep); the
+  # base image they extend is pinned by the openg2p-registry dependency version.
+  staffApi:
+    image:
+      repository: registry.gitlab.com/openg2p/registry/disability-registry/staff-api
+      tag: 0.0.0-develop
+  partnerApi:
+    image:
+      repository: registry.gitlab.com/openg2p/registry/disability-registry/partner-api
+      tag: 0.0.0-develop
+  celeryWorker:
+    image:
+      repository: registry.gitlab.com/openg2p/registry/disability-registry/celery
+      tag: 0.0.0-develop
+  celeryBeat:
+    image:
+      repository: registry.gitlab.com/openg2p/registry/disability-registry/celery
+      tag: 0.0.0-develop
+  dbSeed:
+    image:
+      repository: registry.gitlab.com/openg2p/registry/disability-registry/db-seed
+      tag: 0.0.0-develop
+    # The subchart defaults these OFF (minimal reference registry). This chart
+    # ships demo records and templates, so turn the loaders on. NB these are
+    # `dbSeed.*`, not `global.*` — the db-seed Job reads .Values.dbSeed.load*
+    # and there is no global fallback, so setting them under global is inert.
+    #
+    # loadGeoData stays false: geo is seeded by the master-data chart
+    # (geoSeed.countryPack there), not as a side effect of the registry seed.
+    # Leaving it on would load a second, unrelated hierarchy over the one MDS
+    # already holds.
+    loadGeoData: false
+    loadSampleData: true
+    loadImages: true
+    # loadTemplates must stay TRUE in every environment including production:
+    # without the DCI templates in MinIO every record fails to render and the
+    # partner API returns an empty 200 rather than an error.
+    loadTemplates: true
+    # Copy the country's code lists from Master Data, and match the geo dropdowns
+    # to the hierarchy it holds. Both are country-agnostic: they take whatever
+    # pack this environment loaded, and no-op when Master Data carries neither.
+    # This is what lets one image serve any country.
+    loadAttributes: true
+    syncGeoWidgets: true
+
+  # staffUi and beneApi are consumed as-is from the openg2p-registry base images
+  # (subchart defaults), so they are intentionally not overridden.
+
+  # Name of this registry's tile in IAM. The roles/permissions catalog itself is
+  # registry-agnostic and comes from the subchart.
+  iamRegister:
+    applicationDescription: "Disability Registry"
+
+  # Functional-ID pool. ONE register generates functional IDs here
+  # (PersonWithDisability — see meta_data/register-metadata/g2p_register_definitions.sql
+  # and register_domain/id_generator/), so one pool is declared.
+  #
+  # Declared explicitly so this overlay is correct against ANY pinned
+  # openg2p-registry version — older ones defaulted these to a `farmer` pool. NB
+  # Helm merges maps and a parent `null` cannot remove a subchart default, so
+  # against such a version an unused pool is also provisioned; harmless.
+  idgenerator:
+    idGenerator:
+      appConfig:
+        idTypes:
+          personwithdisability:
+            idLength: 12
+
+  # ── e2e sanity suite (image built here; Set 2 field tests) ─────────────────
+  # The harness and the extension-independent tests (Set 1) are inherited from
+  # the platform sanity image; this image layers our field-specific files on top.
+  sanity:
+    enabled: true
+    image:
+      repository: registry.gitlab.com/openg2p/registry/disability-registry/sanity-tests
+      tag: 0.0.0-develop
+    # This registry's register is NOT the reference registry's, so these cannot
+    # be left at the subchart defaults — they are what the harness uses to build
+    # the DCI envelope and to find the record it injected.
+    #
+    # NB the key is `farmerRegisterId`, not `registerId`. It is named for the
+    # registry it was first written against, and the subchart's _helpers.tpl,
+    # the sanity suite's cfg object and the farmer registry's own override all
+    # use that spelling — so it stays until they are renamed together. It must
+    # match g2p_register_definitions.sql.
+    farmerRegisterId: a0000000-0000-4000-8000-000000000001
+    # Register mnemonic carried as reg_type in the DCI search envelope, and the
+    # DCI record type. Both must match this registry's register definition.
+    regType: PersonWithDisability
+    regRecordType: 'spdci-extensions-dci:PersonwithDisability'
+    # functional_record_id of the injected sanity record (see
+    # test/sanity/sanity/fixtures.py — the two must not drift).
+    searchText: SANITY-PWD-0001
+    # Consent scopes, as COMMA-SEPARATED STRINGS (not YAML lists — the subchart
+    # renders these straight into env). These must be TOP-LEVEL KEYS of
+    # dr_person_to_dci.json.j2: clamping is a strict allow-list over the rendered
+    # record's top-level keys, so a scope naming anything else silently clamps
+    # every record to {}. `denied` must likewise name real scopes the template
+    # emits, or the clamping test asserts nothing.
+    dataScopes: "demographic_info"
+    deniedScopes: "disability_details"
+    # UI coordinates the change-request payload carries. These are OUR tab and
+    # section ids (meta_data/register-metadata/), not the reference registry's.
+    crTabId: "pwd_person_tab"
+    crSectionId: "pwd_demographic_details"
+
+# ── Analytics: reporting views and dashboards ────────────────────────────────
+# Runs after the registry db-seed (hook weight 10) as 45 -> 50.
+#
+# There is deliberately no country setting here. Geography comes from whatever
+# the environment's Master Data Service holds — see geoSeed.countryPack in the
+# openg2p-master-data chart. Declaring a country in two charts is how registry
+# records end up pointing at places MDS has never heard of.
+#
+# There is also no bulkSample block: this registry has no separate bulk
+# generator. See the comment at the top of templates/analytics-jobs.yaml.
+analytics:
+  # Left empty on purpose: these jobs run in the registry db-seed image and
+  # inherit registry.dbSeed.image, whose tag CI rewrites to the built version.
+  # Setting a tag here would pin it to a placeholder CI does not update.
+  image:
+    repository: ""
+    tag: ""
+  waitImage: jbergknoff/postgresql-client:latest
+
+  reportingViews:
+    enabled: true
+
+    # Generate the mechanical views from the schema, after the hand-written
+    # ones. Off means this registry reports on exactly the entities somebody
+    # remembered to write SQL for.
+    generate: true
+
+    # How often the snapshots behind the dashboards are rebuilt.
+    #
+    # These are MATERIALIZED views: Postgres does not update them when the
+    # register changes, so without this they stay frozen at whatever the install
+    # produced — newly registered people simply never appear, and nothing
+    # reports an error. Empty disables the CronJob and leaves the views static.
+    refreshSchedule: "0 * * * *"
+
+    # DEVELOPMENT ONLY — override the reporting scripts from a ConfigMap, so a
+    # change to the SQL or the platform's generator can be tested against a real
+    # install without publishing an image first. Empty in every real deployment.
+    devOverlay:
+      configMap: ""
+      files:
+        - generate_reporting_views.py
+        - reporting_views.sql
+        - reporting.yaml
+
+    # Which materialized views the refresh covers. Matched by prefix rather than
+    # listed, so a view added to reporting_views.sql is picked up without anyone
+    # remembering to add it here. Refresh ORDER is resolved from pg_depend, which
+    # matters here: dr_rpt_support_need SELECTs from dr_rpt_person.
+    matchPrefix: dr_rpt_
+
+  dashboards:
+    # OFF by default, unlike the reference registries.
+    #
+    # The import Job needs a bundle to import, and this repo ships the BUILDER
+    # (docker/dashboards/build_bundle.py) rather than a checked-in ZIP — a binary
+    # blob in git that nobody can review or diff is how dashboards drift away
+    # from the views they read. Build it into the chart's files/ directory and
+    # set this true:
+    #
+    #     python docker/dashboards/build_bundle.py \
+    #       --out helm/openg2p-disability-registry/files/dr-dashboards.zip
+    #
+    # See app-readme.md.
+    enabled: false
+    image:
+      repository: apachesuperset.docker.scarf.sh/apache/superset
+      tag: 4.0.1
+    # Service account that owns imported assets. On a Keycloak-only Superset no
+    # local user exists until someone logs in, so the Job creates this one if
+    # absent.
+    supersetAdmin: svc-importer
+    supersetAdminPasswordSecret:
+      # Generated on first install and adopted thereafter. Whichever of this
+      # registry and G2P Insights installs first creates it; the other adopts it,
+      # which is why both charts default to the same name and key.
+      generate: true
+      name: openg2p-insights-superset-svc
+      key: password
+    # database_name of the connection inside Superset, as recorded in the bundle
+    supersetDatabaseName: DR
+
+    # Superset's OWN configuration. This job runs Superset's CLI and ORM, so it
+    # must be pointed at the SAME metadata database Superset itself uses —
+    # without these it silently imports into a throwaway SQLite file inside its
+    # own pod, exits 0, and leaves the real Superset empty.
+    superset:
+      url: http://commons-services-superset:8088
+      # Superset is a SEPARATE Helm release and analytics is optional, so an
+      # absent Superset SKIPS the dashboard import rather than failing the
+      # install. Set true where the dashboards are load-bearing.
+      required: false
+      waitAttempts: 60
+      waitSeconds: 5
+      envFromSecret: commons-services-superset-env
+      dbPasswordSecret:
+        name: superset-db-user
+        key: superset-db-user-password
+      configSecret: commons-services-superset-config
+      configKey: superset_config.py
+      bootstrapKey: superset_bootstrap.sh
+      enableEmbedding: true
+    # ConfigMap holding dr-dashboards.zip; defaults to <release>-dr-dashboard-bundle
+    bundleConfigMap: ""
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      memory: 2Gi
+
+# ── Maps content for G2P Insights ────────────────────────────────────────────
+# The queries and page this registry contributes to the Insights map surface,
+# published as a ConfigMap for Insights to mount.
+#
+# Harmless when Insights is not installed: nothing else reads it.
+mapsContent:
+  enabled: true
+  # Defaults to <release>-maps-content. Whatever this resolves to is what goes
+  # into the Insights chart as insightMaps.build.content.configMap.
+  nameOverride: ""

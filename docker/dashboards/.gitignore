@@ -1,0 +1,8 @@
+__pycache__/
+# The bundle is generated into helm/openg2p-disability-registry/files/ (Helm
+# cannot read files outside the chart dir), so nothing built should live here.
+#
+# The bundle is not committed there either — see build_bundle.py. It is a binary
+# nobody can review or diff, and a checked-in one drifts away from the reporting
+# views it reads. Build it as part of preparing a release.
+*.zip

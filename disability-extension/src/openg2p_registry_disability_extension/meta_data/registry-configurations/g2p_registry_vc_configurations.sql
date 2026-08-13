@@ -1,0 +1,11 @@
+-- Verifiable-credential configuration.
+--
+-- Intentionally EMPTY. A disability certificate is an obvious VC candidate, but
+-- issuing one is a legal act tied to a country's certification regime — which
+-- authority signs, what it attests, how long it is valid. Shipping a generic
+-- descriptor here would put a credential shape into every deployment that no
+-- country actually recognises.
+--
+-- To enable it, add a row referencing register a0000000-0000-4000-8000-000000000001
+-- and intake form c1000000-0000-4000-8000-000000000001, and register the matching
+-- VERIFIABLE_CREDENTIAL row in g2p_input_mechanisms.sql.

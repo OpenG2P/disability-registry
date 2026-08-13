@@ -1,93 +1,123 @@
-# disability-registry
+# OpenG2P Disability Registry
 
+A registry of **persons with disability**, built on the OpenG2P Registry
+Platform and modelled on the [SPDCI Disability Registry data
+objects](https://standards.spdci.org/standards/dci-standards/wip-disability-registry)
+(DO.DR.01 – DO.DR.10).
 
+It is a **single-register, individual-subject** registry: there is no household
+or group register. The relationships that matter for disability support —
+guardians, primary caregivers, emergency contacts — are recorded as related
+persons rather than inferred from co-residence, because the people who matter to
+a disability case are frequently not the people someone lives with.
 
-## Getting started
+The registry is **country-agnostic**. Geography, code lists and programme names
+all come from whatever country pack the environment's Master Data Service holds;
+nothing here names a country, an administrative level, or a national programme.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## What it holds
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+| Register | Mnemonic | SPDCI object |
+|---|---|---|
+| Person with Disability (master) | `PersonWithDisability` | DO.DR.01 + DO.DR.02 + DO.DR.03 |
+| Disability Details | `DisabilityDetail` | DO.DR.04 |
+| Human Assistance | `HumanAssistance` | DO.DR.06 |
+| Assistive Technology | `AssistiveTechnology` | DO.DR.07 |
+| Medical Care | `MedicalCare` | DO.DR.08 |
+| Housing Support | `HousingSupport` | DO.DR.09 |
+| Animal Assistance | `AnimalAssistance` | DO.DR.10 |
+| Related Persons | `RelatedPerson` | DO.DR.02 `related_person` |
+| Programme Enrolments | `ProgramEnrolment` | DO.DR.03 `programs_enrolments` |
 
-## Add your files
+DO.DR.05 `DisabilitySupport` is a container in the standard, not an entity — it
+groups objects 06–10. It is modelled here as the grouping of those five
+sub-registers and reappears as one `disability_support` block in the outbound
+DCI record.
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+### The one thing this registry is built to answer
+
+**Who needs support they are not getting, and where are they?**
+
+Every support row carries `support_status`, and the gap between `REQUIRED` and
+`RECEIVING`/`RECEIVED` is the unmet need. That single distinction drives the
+denormalised `has_unmet_support_need` flag on the person, the `SUPPORT_NEED`
+triage score, the headline dashboard, and the map. "Unmet" is defined in exactly
+four places and they are kept in step deliberately — see
+[`utils/support_summary.py`](disability-extension/src/openg2p_registry_disability_extension/register_domain/services/utils/support_summary.py).
+
+## Repository layout
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/openg2p/registry/disability-registry.git
-git branch -M develop
-git push -uf origin develop
+disability-registry/
+├── disability-extension/          the Python package: the domain  (see its README)
+├── docker/                        five thin Dockerfiles + the content the images carry
+├── helm/openg2p-disability-registry/   values overlay over the platform chart + analytics jobs
+├── test/                          repo-level guards + the sanity Set-2 tests
+├── scripts/                       version pinning, code-list/translation generation, uninstall
+├── translation/domain.json        GENERATED — see scripts/generate-translations.py
+└── .gitlab-ci.yml                 declares what to build; the logic is in openg2p/packaging
 ```
 
-## Integrate with your tools
+## Working on it
 
-* [Set up project integrations](https://gitlab.com/openg2p/registry/disability-registry/-/settings/integrations)
+```bash
+# repo-level guards — no cluster, no database, run these first
+pytest test/test_rp_pin_lockstep.py test/test_metadata_consistency.py
 
-## Collaborate with your team
+# regenerate after editing models/enums.py or the section metadata
+./scripts/generate-code-lists.py
+./scripts/generate-translations.py
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+# move the platform pin (chart + every Dockerfile together)
+./scripts/bump-rp-version.sh -n        # preview
+./scripts/bump-rp-version.sh <version> # apply
 
-## Test and Deploy
+# chart
+helm dependency update ./helm/openg2p-disability-registry
+helm lint ./helm/openg2p-disability-registry
+helm template dr ./helm/openg2p-disability-registry
 
-Use the built-in continuous integration in GitLab.
+# images (build context is the repo root)
+docker build -f docker/staff-api/Dockerfile -t dr/staff-api:dev .
+```
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+### Building the dashboard bundle
 
-***
+The Superset bundle is **built, not committed** — a binary nobody can diff drifts
+away from the views it reads. `analytics.dashboards.enabled` defaults to `false`
+so an install without one simply skips the import.
 
-# Editing this README
+```bash
+# needs the reporting views to exist: the builder reads their real column list
+python docker/dashboards/build_bundle.py \
+  --out helm/openg2p-disability-registry/files/dr-dashboards.zip
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Three things that will bite you
 
-## Suggestions for a good README
+These are the failure modes this codebase is shaped around. All three are
+**silent** — nothing logs, nothing 500s.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+1. **Field names are a four-way contract.** A column is named in `models/`,
+   again in the section JSON, again in the DCI templates, again in the reporting
+   views. A mismatch gives you a blank field or a missing key, not an error.
+   `test/test_metadata_consistency.py` turns each of those into a build failure.
 
-## Name
-Choose a self-explaining name for your project.
+2. **A consent scope that names no top-level key of the outbound template clamps
+   every record to `{}`.** The partner gets a 200 with nothing in it. The scopes
+   live in `values.yaml` under `registry.sanity.dataScopes`; the guard checks
+   them against the template.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+3. **Seed SQL re-runs on every upgrade**, and the entrypoint runs `psql` with
+   `ON_ERROR_STOP=0` — so an `INSERT` without an `ON CONFLICT` clause aborts its
+   file quietly on the second install. There is a guard for that too.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## Documentation
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Implementation guidance lives in GitBook, not here:
+[Building a Registry](https://docs.openg2p.org/products/registry/registry/developer-zone/building-a-registry).
+This README covers only what is specific to this repository.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Licence
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Mozilla Public License 2.0. See [LICENSE](LICENSE).

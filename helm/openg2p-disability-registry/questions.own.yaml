@@ -1,0 +1,47 @@
+# Questions for keys this chart owns, which exist in no dependency and so cannot
+# be inherited. Appended verbatim to the generated questions.yaml at package time
+# by openg2p/packaging ci/chart/inherit-questions.sh — variables here address the
+# ROOT chart and are NOT path-prefixed.
+
+- variable: analytics.reportingViews.enabled
+  label: "Build reporting views"
+  description: >-
+    Create the reporting views the dashboards, maps and Ask tab read. Turn this
+    off only for an install that does no reporting at all — with it off there is
+    nothing for Superset or Insights to query.
+  type: boolean
+  default: true
+  group: "Analytics"
+
+- variable: analytics.reportingViews.refreshSchedule
+  label: "Reporting data refresh"
+  description: >-
+    How often the reporting views behind the dashboards, maps and Ask tab are
+    rebuilt from the register. These are snapshots — between refreshes, people
+    registered since the last run do not appear in any report. Cron format.
+    Leave empty to never refresh automatically.
+  type: string
+  default: "0 * * * *"
+  group: "Analytics"
+  show_if: "analytics.reportingViews.enabled=true"
+
+- variable: analytics.dashboards.enabled
+  label: "Import Superset dashboards"
+  description: >-
+    Import this registry's dashboard bundle into Superset. Off by default,
+    because the bundle is BUILT rather than shipped — run
+    docker/dashboards/build_bundle.py into
+    helm/openg2p-disability-registry/files/dr-dashboards.zip first. With no
+    bundle present the import job has nothing to import.
+  type: boolean
+  default: false
+  group: "Analytics"
+
+- variable: mapsContent.enabled
+  label: "Publish maps content for G2P Insights"
+  description: >-
+    Publish this registry's map queries and page as a ConfigMap for G2P Insights
+    to mount. Harmless when Insights is not installed — nothing else reads it.
+  type: boolean
+  default: true
+  group: "Analytics"

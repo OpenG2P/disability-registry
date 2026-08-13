@@ -1,0 +1,65 @@
+apiVersion: v2
+name: openg2p-disability-registry
+description: |
+  OpenG2P Disability Registry — a thin, branded package over the shared
+  openg2p-registry chart published by the registry platform.
+
+  A single-register registry of persons with disability, modelled on the SPDCI
+  Disability Registry data objects (DO.DR.01 - DO.DR.10). No group or household
+  register: the subject is the individual.
+
+  This chart owns no service templates. It declares openg2p-registry as a pinned
+  dependency and supplies only this registry's values overlay (variant identity,
+  hostname, the images built here, seed toggles, the ID pool and the IAM tile
+  name), plus the analytics jobs that are genuinely ours — the reporting views
+  and the dashboard import, which are written against this registry's schema.
+type: application
+
+# Version handling:
+#   This `version` is a STATIC placeholder — it is NOT the published version.
+#   The central CI pipeline (build-publish.yml -> openg2p/packaging @v1) derives
+#   the real version from git (one version per commit) and overrides it at
+#   publish time, in lockstep with the images this chart references.
+#   Bumping it here only affects a local `helm package` / `helm install .`.
+version: 0.0.0-develop
+appVersion: "develop"
+
+keywords:
+  - openg2p
+  - registry
+  - disability
+  - disability-registry
+  - spdci
+home: https://openg2p.org
+icon: https://openg2p.github.io/openg2p-helm/openg2p-logo.png
+sources:
+  - https://gitlab.com/openg2p/registry/disability-registry
+maintainers:
+  - name: OpenG2P
+    email: info@openg2p.org
+
+# The Disability Registry is the openg2p-registry chart plus a values overlay.
+# The openg2p-registry version is HARDCODED (not CI-rewritten): the images built
+# here extend that same base image tag, so the two are pinned together and only
+# moved deliberately — with ./scripts/bump-rp-version.sh, which moves this and
+# every docker/*/Dockerfile ARG RP_VERSION at once.
+# test/test_rp_pin_lockstep.py fails the build if they ever split.
+#
+# Aliased to `registry` so the overlay nests under a hyphen-free key
+# (.Values.registry.*).
+#
+# openg2p-registry is pulled from the shared `openg2p/charts` Helm registry
+# (project 84460547, channel `stable`). The project is public, so no credentials
+# are needed to resolve it.
+dependencies:
+  - name: openg2p-registry
+    alias: registry
+    version: 0.0.0-develop.383
+    repository: https://gitlab.com/api/v4/projects/84460547/packages/helm/stable
+
+# Rancher catalog branding
+annotations:
+  catalog.cattle.io/display-name: "OpenG2P Disability Registry"
+  catalog.cattle.io/certified: partner
+  catalog.cattle.io/kube-version: ">=1.23.0-0"
+  openg2p.org/add-to-rancher: ""
