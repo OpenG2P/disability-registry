@@ -46,12 +46,24 @@ variables:
 # push and fail the pipeline before anything is published — which is the point:
 # every one of them catches a mistake whose runtime symptom is silence rather
 # than an error.
+#
+# STAGE: must be one of the stages the included pipeline declares —
+# `stages: [version, build, chart, changelog]`. There is no `test` stage. Naming
+# one that does not exist is not a per-job error: GitLab rejects the whole
+# config, and the pipeline fails INSTANTLY with zero jobs, no YAML error and an
+# empty failure_reason, which looks nothing like the mistake it is.
+#
+# `version` is the first stage, so a guard failure here stops the build and
+# chart stages before any image or chart is published.
 checks:
-  stage: test
+  stage: version
   image: python:3.11-slim
   script:
+    # test/sanity is deliberately excluded: those tests import the platform
+    # sanity harness, which only exists inside the sanity image. They run
+    # in-cluster as a Helm post-install Job, not here.
     - pip install --no-cache-dir pytest pyyaml
-    - pytest test/test_rp_pin_lockstep.py test/test_metadata_consistency.py -v
+    - pytest test/ --ignore=test/sanity -v
   rules:
     - if: $CI_COMMIT_BRANCH
     - if: $CI_MERGE_REQUEST_IID
