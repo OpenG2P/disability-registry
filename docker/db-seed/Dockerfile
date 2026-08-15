@@ -24,7 +24,7 @@
 #
 # Build context = repo root (so disability-extension/ and docker/db-seed/ are
 # both reachable).
-ARG RP_VERSION=0.0.0-develop.383
+ARG RP_VERSION=0.0.0-develop.384
 FROM registry.gitlab.com/openg2p/registry/registry-platform/db-seed:${RP_VERSION}
 
 # The base image ships the reference registry's seed; clear it so only this

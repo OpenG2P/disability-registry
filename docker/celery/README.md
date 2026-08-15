@@ -1,4 +1,4 @@
-Both celery codebases (celery-workers and celery-beat-producers), plus the
+Both celery codebases (celery-worker and celery-beat), plus the
 `run_celery.py` startup wrapper, live in the registry-platform base image
 `registry-platform/celery`. This registry's `docker/celery/Dockerfile` only
 extends that base with the Disability Registry domain model — it does not
@@ -11,14 +11,14 @@ the base) reads them:
 1. Run as a Worker (default):
 
    ```
-   CELERY_APP: openg2p_registry_celery_workers.main.celery_app
+   CELERY_APP: openg2p_registry_celery_worker.main.celery_app
    CELERY_OPTS: worker --loglevel=info
    ```
 
 2. Run as a Beat producer:
 
    ```
-   CELERY_APP: openg2p_registry_celery_beat_producers.main.celery_app
+   CELERY_APP: openg2p_registry_celery_beat.main.celery_app
    CELERY_OPTS: worker --beat --loglevel=info --schedule=/tmp/celery-beat-schedule.db
    ```
 

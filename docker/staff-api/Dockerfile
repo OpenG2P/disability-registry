@@ -14,7 +14,7 @@
 # fails the build if they ever split.
 #
 # Build context = repo root (so disability-extension/ is reachable).
-ARG RP_VERSION=0.0.0-develop.383
+ARG RP_VERSION=0.0.0-develop.384
 FROM registry.gitlab.com/openg2p/registry/registry-platform/staff-api:${RP_VERSION}
 
 # Select this registry's domain model. It coexists with the base image's
