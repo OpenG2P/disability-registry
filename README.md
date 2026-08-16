@@ -81,17 +81,25 @@ helm template dr ./helm/openg2p-disability-registry
 docker build -f docker/staff-api/Dockerfile -t dr/staff-api:dev .
 ```
 
-### Building the dashboard bundle
+### Rebuilding the dashboard bundle
 
-The Superset bundle is **built, not committed** — a binary nobody can diff drifts
-away from the views it reads. `analytics.dashboards.enabled` defaults to `false`
-so an install without one simply skips the import.
+`files/dr-dashboards.zip` (7 dashboards, 59 charts) is **committed**, as in the
+Farmer Registry and NSR — CI packages the chart with no database to read the
+reporting views from, and `.Files.Get` cannot reach outside the chart directory,
+so building at package time is not an option.
+
+The cost is a binary no review can read. Mitigate it by **rebuilding rather than
+hand-editing**, whenever the reporting views change:
 
 ```bash
-# needs the reporting views to exist: the builder reads their real column list
+# the builder reads the views' REAL column list, so they must exist somewhere
+# reachable — point PGHOST/PGPORT at an installed registry
 python docker/dashboards/build_bundle.py \
   --out helm/openg2p-disability-registry/files/dr-dashboards.zip
 ```
+
+Asset UUIDs come from `uuid5` over stable keys, so re-importing updates the
+existing dashboards in place instead of duplicating them.
 
 ## Three things that will bite you
 

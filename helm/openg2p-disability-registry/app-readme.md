@@ -53,10 +53,31 @@ global:
 Never promote a sandbox namespace to production — demo records cannot be cleanly
 separated afterwards. Install fresh.
 
-## Dashboards
+## Analytics
 
-`analytics.dashboards.enabled` defaults to **false**. The Superset bundle is
-built rather than shipped; build it into `files/dr-dashboards.zip` with
-`docker/dashboards/build_bundle.py` before turning this on.
+All three parts are **on** by default:
+
+| | What you get |
+|---|---|
+| `analytics.reportingViews` | Two hand-written views (`dr_rpt_person`, `dr_rpt_support_need`) plus 13 generated ones, refreshed hourly by a CronJob |
+| `analytics.dashboards` | 7 Superset dashboards / 59 charts — unmet support need, support provision, registry profile, programme coverage, inclusion, care network, register health |
+| `mapsContent` | Map queries and page for G2P Insights, published as a ConfigMap |
+
+Dashboards need a Superset reachable at `analytics.dashboards.superset.url`
+(default `http://commons-services-superset:8088`). An **absent** Superset skips
+the import rather than failing the install — set
+`analytics.dashboards.superset.required=true` where the dashboards are
+load-bearing.
+
+The bundle ships as `files/dr-dashboards.zip`. Rebuild it — never hand-edit —
+whenever the reporting views change:
+
+```bash
+python docker/dashboards/build_bundle.py \
+  --out helm/openg2p-disability-registry/files/dr-dashboards.zip
+```
+
+Asset UUIDs are derived from stable keys, so re-importing updates the existing
+dashboards rather than duplicating them.
 
 See the deployment docs at [docs.openg2p.org](https://docs.openg2p.org).

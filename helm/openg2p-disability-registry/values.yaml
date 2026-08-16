@@ -200,19 +200,23 @@ analytics:
     matchPrefix: dr_rpt_
 
   dashboards:
-    # OFF by default, unlike the reference registries.
+    # The bundle (files/dr-dashboards.zip) is COMMITTED, as it is in the Farmer
+    # Registry and NSR — the chart is packaged by CI, which has no database to
+    # read the reporting views from, so a bundle built at package time is not an
+    # option. `.Files.Get` cannot reach outside the chart directory either, so
+    # the artefact has to live here.
     #
-    # The import Job needs a bundle to import, and this repo ships the BUILDER
-    # (docker/dashboards/build_bundle.py) rather than a checked-in ZIP — a binary
-    # blob in git that nobody can review or diff is how dashboards drift away
-    # from the views they read. Build it into the chart's files/ directory and
-    # set this true:
+    # The cost is a binary in git that no review can read. Mitigate it by
+    # REBUILDING rather than hand-editing, whenever the reporting views change:
     #
     #     python docker/dashboards/build_bundle.py \
     #       --out helm/openg2p-disability-registry/files/dr-dashboards.zip
     #
-    # See app-readme.md.
-    enabled: false
+    # The builder reads the views' real column list, so the views must exist in
+    # a reachable database when you run it. Asset UUIDs are derived with uuid5
+    # from stable keys, so a re-import updates the existing dashboards in place
+    # instead of duplicating them.
+    enabled: true
     image:
       repository: apachesuperset.docker.scarf.sh/apache/superset
       tag: 4.0.1

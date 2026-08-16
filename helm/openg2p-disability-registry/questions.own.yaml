@@ -28,13 +28,13 @@
 - variable: analytics.dashboards.enabled
   label: "Import Superset dashboards"
   description: >-
-    Import this registry's dashboard bundle into Superset. Off by default,
-    because the bundle is BUILT rather than shipped — run
-    docker/dashboards/build_bundle.py into
-    helm/openg2p-disability-registry/files/dr-dashboards.zip first. With no
-    bundle present the import job has nothing to import.
+    Import this registry's 7 dashboards (59 charts) into Superset — unmet support
+    need, support provision, registry profile, programme coverage, inclusion,
+    care network and register health. Needs a Superset reachable at
+    analytics.dashboards.superset.url; an absent Superset skips the import rather
+    than failing the install. Turn off for a deployment that does no reporting.
   type: boolean
-  default: false
+  default: true
   group: "Analytics"
 
 - variable: mapsContent.enabled
