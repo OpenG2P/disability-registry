@@ -7,6 +7,22 @@
 
 prefix: dr_rpt_
 
+# Entity names the generator cannot derive.
+#
+# It names a view by stripping `g2p_register_` and de-pluralising the table:
+# `..._disability_details` -> `disability_detail`, `..._assistive_technologies` ->
+# `assistive_technology`. That rule cannot reach this registry's master table.
+# `g2p_register_persons_with_disability` pluralises the HEAD noun, so it does not
+# end in `s` at all and comes back unchanged as `persons_with_disability` — which
+# matches nothing in the tree below, and silently drops every parent link (and
+# with it every child's geography).
+#
+# Mapped to `person` rather than `person_with_disability` so the generated name
+# lines up with the hand-written `dr_rpt_person` view in reporting_views.sql; the
+# `custom:` entry below then tells the generator to leave it alone.
+views:
+  persons_with_disability: person
+
 # The entity tree — DECLARED, not discovered.
 #
 # Discovery reads the data, and a production registry is installed EMPTY: the
@@ -16,16 +32,16 @@ prefix: dr_rpt_
 # This registry's tree is a single star: everything hangs off the person. There
 # is no group register, so nothing here has a two-level parent chain.
 tree:
-  person_with_disability: null
-  disability_detail:      {parent: person_with_disability}
-  human_assistance:       {parent: person_with_disability}
-  assistive_technology:   {parent: person_with_disability}
-  medical_care:           {parent: person_with_disability}
-  housing_support:        {parent: person_with_disability}
-  animal_assistance:      {parent: person_with_disability}
-  related_person:         {parent: person_with_disability}
-  program_enrolment:      {parent: person_with_disability}
-  score:                  {parent: person_with_disability}
+  person:                null
+  disability_detail:      {parent: person}
+  human_assistance:       {parent: person}
+  assistive_technology:   {parent: person}
+  medical_care:           {parent: person}
+  housing_support:        {parent: person}
+  animal_assistance:      {parent: person}
+  related_person:         {parent: person}
+  program_enrolment:      {parent: person}
+  score:                  {parent: person}
   score_history:          null
 
 # Hand-written, and left alone by the generator.
@@ -64,21 +80,21 @@ pii:
 # definitions of where 25 falls is how two charts come to disagree.
 inherit:
   disability_detail:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
   human_assistance:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
   assistive_technology:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
   medical_care:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
   housing_support:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
   animal_assistance:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
   related_person:
-    person_with_disability: [gender, is_female, age_band]
+    person: [gender, is_female, age_band]
   program_enrolment:
-    person_with_disability: [gender, is_female, age_band, disability_status_level]
+    person: [gender, is_female, age_band, disability_status_level]
 
 # Materialized, with the columns their charts group by.
 #
@@ -97,5 +113,9 @@ materialized:
       - [geo_1, geo_2, geo_3]
   program_enrolment:
     indexes:
-      - [program_name]
+      # NOT program_name: the classifier withholds it as personal data (see the
+      # pii block above), so a generated view has no such column and indexing it
+      # fails the whole reporting job. Programme aggregates live on
+      # dr_rpt_person.programmes, which is where the pii rationale says to look.
+      - [enrolment_status]
       - [geo_1, geo_2, geo_3]
