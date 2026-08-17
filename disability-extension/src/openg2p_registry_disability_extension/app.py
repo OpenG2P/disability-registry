@@ -38,7 +38,6 @@ from .register_domain.models import (
     G2PRegisterHistoryProgramEnrolment,
     G2PIntakeFormProgramEnrolment,
 )
-from .register_domain.factory import G2PRegisterDomainFactory
 from .register_domain.services import (
     G2PRegisterDomainServicePersonWithDisability,
     G2PRegisterDomainServiceDisabilityDetail,
@@ -58,8 +57,6 @@ class Initializer(BaseInitializer):
     def initialize(self, **kwargs):
         super().initialize()
         CoreInitializer().initialize()
-
-        G2PRegisterDomainFactory()
 
         # Instantiated eagerly so `get_component()` resolves them later. Every
         # register in this extension has domain behaviour — validation, naming,
