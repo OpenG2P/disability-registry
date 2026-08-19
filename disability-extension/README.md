@@ -42,7 +42,6 @@ src/openg2p_registry_disability_extension/
 │   ├── models/            SQLAlchemy ORM — register, history, intake_form per register
 │   ├── schemas/           Pydantic API representations
 │   ├── services/          per-register domain behaviour (validation, naming, hooks)
-│   ├── factory/           mnemonic -> class resolution
 │   └── id_generator/      functional-ID affixes
 ├── meta_data/             seed SQL: registers, UI, code lists, message rules
 ├── awe_meta_data/         approval-workflow seed SQL
