@@ -1,12 +1,13 @@
 -- Theme palette.
 --
--- The contrast ratios below are not decoration. This registry's own users
--- include people with low vision, so the default palette is chosen to clear
--- WCAG 2.1 AA (4.5:1 for body text) against its own background rather than
--- inheriting whatever the brand colours happen to give. #1F4E79 on #FFFFFF is
--- 8.6:1; #B34700 on #FFFFFF is 4.9:1. Replace these in a country pack by all
--- means — but check the replacement, because a registry of people with visual
--- impairments that ships an inaccessible UI is a contradiction.
+-- The users of this registry are government staff — registration officers,
+-- assessment boards, caseworkers — not the people whose records it holds. The
+-- contrast ratios below are still deliberate: these are screens somebody reads
+-- all day, and many public-sector bodies are bound by an accessibility standard
+-- for their internal systems. #1F4E79 on #FFFFFF is 8.6:1; #B34700 on #FFFFFF
+-- is 4.9:1, both past WCAG 2.1 AA (4.5:1 for body text). Replace them in a
+-- country pack by all means — but check the replacement rather than assuming
+-- brand colours pass.
 --
 -- font_url / font_family are left empty so the platform default applies;
 -- dashboard_image is set through the staff portal rather than carried as a
