@@ -8,8 +8,8 @@
 # dr_person_to_dci.json.j2 and enforces consent scopes against it.
 #
 # Build context = repo root (so disability-extension/ is reachable).
-ARG RP_VERSION=0.0.0-develop.384
-FROM registry.gitlab.com/openg2p/registry/registry-platform/partner-api:${RP_VERSION}
+ARG RP_VERSION=0.0.0-develop.421
+FROM openg2p/openg2p-registry-partner-api:${RP_VERSION}
 
 ENV REGISTRY_EXTENSION_MODULE=openg2p_registry_disability_extension
 

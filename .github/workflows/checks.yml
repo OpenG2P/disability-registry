@@ -1,5 +1,5 @@
-# Mirror of the `checks` job in .gitlab-ci.yml, for the GitHub mirror of this
-# repo. Builds and publishing happen on GitLab; this only runs the guards.
+# Repo checks (lint, tests). Build/publish lives in build-publish.yml, which calls
+# openg2p-packaging@v1; this only runs the guards.
 name: checks
 
 on:

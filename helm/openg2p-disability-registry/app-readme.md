@@ -17,7 +17,7 @@ reporting views and the Superset dashboard import, both written against this
 registry's schema.
 
 - **Platform chart & images:** published by
-  [registry-platform](https://gitlab.com/openg2p/registry/registry-platform);
+  [registry-platform](https://github.com/OpenG2P/registry-platform);
   this chart pins a specific `openg2p-registry` version as a dependency.
 - **What to set:** the ingress host (`global.registryHostname`) and, for a real
   environment, the shared commons endpoints (Postgres, Keycloak, Consent/Partner

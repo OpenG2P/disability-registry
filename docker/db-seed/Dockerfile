@@ -24,8 +24,8 @@
 #
 # Build context = repo root (so disability-extension/ and docker/db-seed/ are
 # both reachable).
-ARG RP_VERSION=0.0.0-develop.384
-FROM registry.gitlab.com/openg2p/registry/registry-platform/db-seed:${RP_VERSION}
+ARG RP_VERSION=0.0.0-develop.421
+FROM openg2p/openg2p-registry-db-seed:${RP_VERSION}
 
 # The base image ships the reference registry's seed; clear it so only this
 # registry's seed is applied. Without this the reference registry's register

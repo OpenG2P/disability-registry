@@ -46,23 +46,23 @@ registry:
   # base image they extend is pinned by the openg2p-registry dependency version.
   staffApi:
     image:
-      repository: registry.gitlab.com/openg2p/registry/disability-registry/staff-api
+      repository: openg2p/openg2p-disability-registry-staff-api
       tag: 0.0.0-develop
   partnerApi:
     image:
-      repository: registry.gitlab.com/openg2p/registry/disability-registry/partner-api
+      repository: openg2p/openg2p-disability-registry-partner-api
       tag: 0.0.0-develop
   celeryWorker:
     image:
-      repository: registry.gitlab.com/openg2p/registry/disability-registry/celery
+      repository: openg2p/openg2p-disability-registry-celery
       tag: 0.0.0-develop
   celeryBeat:
     image:
-      repository: registry.gitlab.com/openg2p/registry/disability-registry/celery
+      repository: openg2p/openg2p-disability-registry-celery
       tag: 0.0.0-develop
   dbSeed:
     image:
-      repository: registry.gitlab.com/openg2p/registry/disability-registry/db-seed
+      repository: openg2p/openg2p-disability-registry-db-seed
       tag: 0.0.0-develop
     # The subchart defaults these OFF (minimal reference registry). This chart
     # ships demo records and templates, so turn the loaders on. NB these are
@@ -116,7 +116,7 @@ registry:
   sanity:
     enabled: true
     image:
-      repository: registry.gitlab.com/openg2p/registry/disability-registry/sanity-tests
+      repository: openg2p/openg2p-disability-registry-sanity-tests
       tag: 0.0.0-develop
     # This registry's register is NOT the reference registry's, so these cannot
     # be left at the subchart defaults — they are what the harness uses to build

@@ -55,7 +55,7 @@ disability-registry/
 ├── test/                          repo-level guards + the sanity Set-2 tests
 ├── scripts/                       version pinning, code-list/translation generation, uninstall
 ├── translation/domain.json        GENERATED — see scripts/generate-translations.py
-└── .gitlab-ci.yml                 declares what to build; the logic is in openg2p/packaging
+└── .github/workflows/            declares what to build; the logic is in openg2p-packaging
 ```
 
 ## Working on it

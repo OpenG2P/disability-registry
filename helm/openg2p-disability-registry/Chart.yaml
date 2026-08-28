@@ -33,7 +33,7 @@ keywords:
 home: https://openg2p.org
 icon: https://openg2p.github.io/openg2p-helm/openg2p-logo.png
 sources:
-  - https://gitlab.com/openg2p/registry/disability-registry
+  - https://github.com/OpenG2P/disability-registry
 maintainers:
   - name: OpenG2P
     email: info@openg2p.org
@@ -54,8 +54,8 @@ maintainers:
 dependencies:
   - name: openg2p-registry
     alias: registry
-    version: 0.0.0-develop.384
-    repository: https://gitlab.com/api/v4/projects/84460547/packages/helm/stable
+    version: 0.0.0-develop.421
+    repository: https://openg2p.github.io/openg2p-helm
 
 # Rancher catalog branding
 annotations:
