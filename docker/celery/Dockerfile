@@ -11,7 +11,7 @@
 # extension package is installed.
 #
 # Build context = repo root (so disability-extension/ is reachable).
-ARG RP_VERSION=0.0.0-develop.621
+ARG RP_VERSION=0.0.0-develop.625
 FROM openg2p/openg2p-registry-celery:${RP_VERSION}
 
 ENV REGISTRY_EXTENSION_MODULE=openg2p_registry_disability_extension
