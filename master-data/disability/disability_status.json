@@ -1,0 +1,54 @@
+{
+  "attribute_id": "DISABILITY_STATUS",
+  "attribute_code": "DISABILITY_STATUS",
+  "attribute_display": "Disability status",
+  "description": "Assessment-based status of a person in a disability registry, as distinct from a yes/no survey answer. ASSESSED_DISABLED carries the disability_yes role.",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "ASSESSED_DISABLED",
+      "value_code": "ASSESSED_DISABLED",
+      "value_display": "Assessed disabled",
+      "sort_order": 1,
+      "roles": [
+        "disability_yes"
+      ],
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ASSESSED_NOT_DISABLED",
+      "value_code": "ASSESSED_NOT_DISABLED",
+      "value_display": "Assessed not disabled",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "EXPIRED",
+      "value_code": "EXPIRED",
+      "value_display": "Expired",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PENDING_ASSESSMENT",
+      "value_code": "PENDING_ASSESSMENT",
+      "value_display": "Pending assessment",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SELF_DECLARED",
+      "value_code": "SELF_DECLARED",
+      "value_display": "Self declared",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "UNKNOWN",
+      "value_code": "UNKNOWN",
+      "value_display": "Unknown",
+      "sort_order": 6,
+      "display_i18n": {}
+    }
+  ]
+}

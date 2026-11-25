@@ -1,0 +1,141 @@
+{
+  "attribute_id": "ASSISTIVE_TECHNOLOGY_TYPE",
+  "attribute_code": "ASSISTIVE_TECHNOLOGY_TYPE",
+  "attribute_display": "Assistive technology type",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "CANES",
+      "value_code": "CANES",
+      "value_display": "Canes",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "CRUTCHES",
+      "value_code": "CRUTCHES",
+      "value_display": "Crutches",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "WALKING_FRAMES",
+      "value_code": "WALKING_FRAMES",
+      "value_display": "Walking frames",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "MANUAL_WHEELCHAIR",
+      "value_code": "MANUAL_WHEELCHAIR",
+      "value_display": "Manual wheelchair",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ELECTRIC_WHEELCHAIR",
+      "value_code": "ELECTRIC_WHEELCHAIR",
+      "value_display": "Electric wheelchair",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PROSTHESES",
+      "value_code": "PROSTHESES",
+      "value_display": "Prostheses",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ORTHOSES",
+      "value_code": "ORTHOSES",
+      "value_display": "Orthoses",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "THERAPEUTIC_FOOTWEAR",
+      "value_code": "THERAPEUTIC_FOOTWEAR",
+      "value_display": "Therapeutic footwear",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HEARING_AIDS",
+      "value_code": "HEARING_AIDS",
+      "value_display": "Hearing aids",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "COCHLEAR_IMPLANTS",
+      "value_code": "COCHLEAR_IMPLANTS",
+      "value_display": "Cochlear implants",
+      "sort_order": 10,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SPECTACLES",
+      "value_code": "SPECTACLES",
+      "value_display": "Spectacles",
+      "sort_order": 11,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "MAGNIFIERS",
+      "value_code": "MAGNIFIERS",
+      "value_display": "Magnifiers",
+      "sort_order": 12,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "BRAILLE_DEVICES",
+      "value_code": "BRAILLE_DEVICES",
+      "value_display": "Braille devices",
+      "sort_order": 13,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SCREEN_READERS",
+      "value_code": "SCREEN_READERS",
+      "value_display": "Screen readers",
+      "sort_order": 14,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "COMMUNICATION_BOARDS",
+      "value_code": "COMMUNICATION_BOARDS",
+      "value_display": "Communication boards",
+      "sort_order": 15,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SPEECH_GENERATING_DEVICES",
+      "value_code": "SPEECH_GENERATING_DEVICES",
+      "value_display": "Speech generating devices",
+      "sort_order": 16,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PRESSURE_RELIEF_CUSHIONS",
+      "value_code": "PRESSURE_RELIEF_CUSHIONS",
+      "value_display": "Pressure relief cushions",
+      "sort_order": 17,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "INCONTINENCE_PRODUCTS",
+      "value_code": "INCONTINENCE_PRODUCTS",
+      "value_display": "Incontinence products",
+      "sort_order": 18,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 19,
+      "display_i18n": {}
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "attribute_id": "EMPLOYMENT_STATUS",
+  "attribute_code": "EMPLOYMENT_STATUS",
+  "attribute_display": "Employment status",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "EMPLOYED",
+      "value_code": "EMPLOYED",
+      "value_display": "Employed",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SELF_EMPLOYED",
+      "value_code": "SELF_EMPLOYED",
+      "value_display": "Self employed",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SHELTERED_EMPLOYMENT",
+      "value_code": "SHELTERED_EMPLOYMENT",
+      "value_display": "Sheltered employment",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SUPPORTED_EMPLOYMENT",
+      "value_code": "SUPPORTED_EMPLOYMENT",
+      "value_display": "Supported employment",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "UNEMPLOYED_SEEKING",
+      "value_code": "UNEMPLOYED_SEEKING",
+      "value_display": "Unemployed, seeking work",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "UNEMPLOYED_NOT_SEEKING",
+      "value_code": "UNEMPLOYED_NOT_SEEKING",
+      "value_display": "Unemployed, not seeking work",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "STUDENT",
+      "value_code": "STUDENT",
+      "value_display": "Student",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RETIRED",
+      "value_code": "RETIRED",
+      "value_display": "Retired",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "UNABLE_TO_WORK",
+      "value_code": "UNABLE_TO_WORK",
+      "value_display": "Unable to work",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 10,
+      "display_i18n": {}
+    }
+  ]
+}

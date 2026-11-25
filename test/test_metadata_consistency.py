@@ -197,6 +197,50 @@ def test_every_dropdown_attribute_has_a_code_list():
     )
 
 
+def test_master_data_lists_cover_every_dropdown_and_are_loadable():
+    """master-data/disability/ is what a Master Data is actually given (the
+    registry's own seed cannot load lists), so a dropdown with no file there is
+    an empty dropdown in every environment. The files must also be in the shape
+    Master Data keys on: one spelling per value, a display a person can read."""
+    folder = REPO / "master-data" / "disability"
+    lists = {}
+    problems = []
+    for path in sorted(folder.glob("*.json")):
+        document = json.loads(read(path))
+        attribute = document.get("attribute_id")
+        lists[attribute] = document
+        if path.name != f"{str(attribute).lower()}.json":
+            problems.append(f"{path.name}: declares {attribute}")
+        values = document.get("values") or []
+        if not values:
+            problems.append(f"{attribute}: no values")
+        codes = [value.get("value_code") for value in values]
+        if len(set(codes)) != len(codes):
+            problems.append(f"{attribute}: duplicate value_code")
+        if [value.get("sort_order") for value in values] != list(range(1, len(values) + 1)):
+            problems.append(f"{attribute}: sort_order is not 1..n")
+        for value in values:
+            if value.get("value_id") != value.get("value_code"):
+                problems.append(f"{attribute}.{value.get('value_code')}: value_id differs from value_code")
+            display = value.get("value_display") or ""
+            # "SMS" is a fine display; "AT_BIRTH" is a code nobody translated.
+            if not display.strip() or "_" in display:
+                problems.append(f"{attribute}.{value.get('value_code')}: display is missing or is a raw code")
+    assert not problems, "master-data/disability/ lists are not loadable:\n  " + "\n  ".join(problems)
+
+    referenced = set()
+    for widget in all_widgets():
+        source = widget.get("widget-data-source") or {}
+        attribute = (source.get("params") or {}).get("attribute_id")
+        if attribute:
+            referenced.add(attribute)
+    missing = referenced - set(lists)
+    assert not missing, (
+        f"dropdowns with no list in master-data/disability/: {sorted(missing)}. "
+        "Run ./scripts/generate-code-lists.py."
+    )
+
+
 def test_code_lists_match_the_enums():
     """The generated code lists must be in step with models/enums.py.
 
@@ -323,3 +367,14 @@ def test_templates_referenced_by_metadata_exist(name):
         f"upload it to MinIO but nothing would reference it"
     )
     assert (TEMPLATES / name).is_file(), f"{name} is registered in metadata but does not exist"
+
+
+def test_every_tab_label_has_english_text():
+    """The portal translates `tab_label`; without a key it shows the raw name."""
+    translations = json.loads((REPO / "translation/domain.json").read_text())
+    labels = set()
+    for name in ("g2p_register_ui_tabs.sql", "g2p_intake_form_ui_tabs.sql"):
+        sql = (EXT / "meta_data/register-metadata" / name).read_text()
+        labels |= set(re.findall(r"^\('[^']*','[^']*','([^']*)'", sql, re.M))
+    assert len(labels) == 7
+    assert sorted(labels - set(translations)) == []

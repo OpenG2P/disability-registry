@@ -1,0 +1,99 @@
+{
+  "attribute_id": "IMPAIRMENT_TYPE",
+  "attribute_code": "IMPAIRMENT_TYPE",
+  "attribute_display": "Impairment type",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "VISUAL",
+      "value_code": "VISUAL",
+      "value_display": "Visual",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HEARING",
+      "value_code": "HEARING",
+      "value_display": "Hearing",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "DEAFBLIND",
+      "value_code": "DEAFBLIND",
+      "value_display": "Deafblind",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PHYSICAL_MOBILITY",
+      "value_code": "PHYSICAL_MOBILITY",
+      "value_display": "Physical or mobility",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SPEECH_LANGUAGE",
+      "value_code": "SPEECH_LANGUAGE",
+      "value_display": "Speech and language",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "INTELLECTUAL",
+      "value_code": "INTELLECTUAL",
+      "value_display": "Intellectual",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PSYCHOSOCIAL",
+      "value_code": "PSYCHOSOCIAL",
+      "value_display": "Psychosocial",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "NEUROLOGICAL",
+      "value_code": "NEUROLOGICAL",
+      "value_display": "Neurological",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "LEARNING",
+      "value_code": "LEARNING",
+      "value_display": "Learning",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "CHRONIC_ILLNESS",
+      "value_code": "CHRONIC_ILLNESS",
+      "value_display": "Chronic illness",
+      "sort_order": 10,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SELF_CARE",
+      "value_code": "SELF_CARE",
+      "value_display": "Self care",
+      "sort_order": 11,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "MULTIPLE",
+      "value_code": "MULTIPLE",
+      "value_display": "Multiple",
+      "sort_order": 12,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 13,
+      "display_i18n": {}
+    }
+  ]
+}

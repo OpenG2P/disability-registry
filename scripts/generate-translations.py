@@ -3,8 +3,8 @@
 
 Why this exists
 ---------------
-Every `widget-label` and `section-title` in `g2p_register_sections.sql`, and every
-enum value that reaches a dropdown, is a translation KEY. The staff portal renders
+Every `widget-label` and `section-title` in `g2p_register_sections.sql`, every
+`tab_label`, and every enum value that reaches a dropdown, is a translation KEY. The staff portal renders
 the raw key when the language row has no entry for it — so a field added without
 a matching translation shows up in the UI as `assistive_technology_type` instead
 of "Assistive Technology Type". Nothing errors; the screen just looks unfinished.
@@ -35,6 +35,10 @@ import sys
 REPO = pathlib.Path(__file__).resolve().parent.parent
 EXT = REPO / "disability-extension/src/openg2p_registry_disability_extension"
 SECTIONS_SQL = EXT / "meta_data/register-metadata/g2p_register_sections.sql"
+TAB_SQLS = [
+    EXT / "meta_data/register-metadata/g2p_register_ui_tabs.sql",
+    EXT / "meta_data/register-metadata/g2p_intake_form_ui_tabs.sql",
+]
 ENUMS = EXT / "register_domain/models/enums.py"
 LANGUAGES_SQL = EXT / "meta_data/registry-configurations/g2p_registry_languages.sql"
 DOMAIN_JSON = REPO / "translation/domain.json"
@@ -77,6 +81,22 @@ OVERRIDES = {
     "ADOLESCENCE_13_17": "Adolescence (13-17)",
     "ADULTHOOD_18_59": "Adulthood (18-59)",
     "OLD_AGE_60_PLUS": "Old age (60+)",
+    # Acronyms and joins the generic humaniser flattens ("Sms", "Icf based").
+    # scripts/generate-code-lists.py takes its dropdown displays from the file
+    # this writes, so these are also what Master Data shows.
+    "SMS": "SMS",
+    "NGO": "NGO",
+    "ICF_BASED": "ICF based",
+    "CRVS_TRANSFER": "CRVS transfer",
+    "FOUNDATIONAL_ID_VERIFIED": "Foundational ID verified",
+    "WASHINGTON_GROUP_SHORT_SET": "Washington Group short set",
+    "WASHINGTON_GROUP_EXTENDED": "Washington Group extended",
+    "CONFLICT_VIOLENCE": "Conflict or violence",
+    "SPEECH_LANGUAGE": "Speech and language",
+    "PHYSICAL_MOBILITY": "Physical or mobility",
+    "UNEMPLOYED_SEEKING": "Unemployed, seeking work",
+    "UNEMPLOYED_NOT_SEEKING": "Unemployed, not seeking work",
+    "GOVERNMENT_PROGRAM": "Government programme",
 }
 
 # Actions the table widgets render, one per list section.
@@ -139,6 +159,14 @@ def ui_keys() -> set[str]:
     return keys
 
 
+def tab_keys() -> set[str]:
+    """`tab_label` is the third column of both tab tables."""
+    keys: set[str] = set()
+    for path in TAB_SQLS:
+        keys.update(re.findall(r"^\('[^']*','[^']*','([^']+)'", path.read_text(), re.M))
+    return keys
+
+
 def enum_keys() -> set[str]:
     spec = importlib.util.spec_from_file_location("dr_enums", ENUMS)
     module = importlib.util.module_from_spec(spec)
@@ -160,7 +188,7 @@ def humanise(key: str) -> str:
         # Enum value: SEVERE_IMPAIRMENT -> "Severe impairment"
         words = key.replace("_", " ").lower()
         return words[0].upper() + words[1:] if words else key
-    label = re.sub(r"[_\s]+", " ", key).strip().title()
+    label = re.sub(r"[_\s]+", " ", key.removesuffix("_tab")).strip().title()
     # Title() capitalises every word, which reads wrong in a section heading
     # ("Disability Status And Assessment"). Lower the joining words back down,
     # except when one starts the label.
@@ -170,7 +198,7 @@ def humanise(key: str) -> str:
 
 
 def build() -> dict[str, str]:
-    keys = ui_keys() | enum_keys() | set(TABLE_ACTIONS) | set(RECORD_STATUSES)
+    keys = ui_keys() | tab_keys() | enum_keys() | set(TABLE_ACTIONS) | set(RECORD_STATUSES)
     existing: dict[str, str] = {}
     if DOMAIN_JSON.exists():
         existing = json.loads(DOMAIN_JSON.read_text())
@@ -214,7 +242,8 @@ def render_languages_sql(translations: dict[str, str]) -> str:
         "--\n"
         "-- Regenerate with ./scripts/generate-translations.py, which derives the\n"
         "-- domain_translation key set from the widget labels in\n"
-        "-- g2p_register_sections.sql and the values in models/enums.py. A key the\n"
+        "-- g2p_register_sections.sql, the tab labels and the values in\n"
+        "-- models/enums.py. A key the\n"
         "-- UI references but this row lacks is rendered raw in the staff portal.\n"
         "--\n"
         "-- core_translation is left empty on purpose: the platform UI ships its own.\n"

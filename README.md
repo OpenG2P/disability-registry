@@ -15,6 +15,11 @@ The registry is **country-agnostic**. Geography, code lists and programme names
 all come from whatever country pack the environment's Master Data Service holds;
 nothing here names a country, an administrative level, or a national programme.
 
+No country pack carries this registry's own lists yet (impairment type, support
+status, assistive technology and the rest), so a Master Data has to be given
+them: [`master-data/`](master-data/README.md) holds them in pack format, and
+`./scripts/load-code-lists.py` adds the ones an environment lacks.
+
 ## What it holds
 
 | Register | Mnemonic | SPDCI object |
@@ -85,8 +90,9 @@ disability-registry/
 ├── disability-extension/          the Python package: the domain  (see its README)
 ├── docker/                        five thin Dockerfiles + the content the images carry
 ├── helm/openg2p-disability-registry/   values overlay over the platform chart + analytics jobs
+├── master-data/                   GENERATED code lists in country-pack format, for Master Data  (see its README)
 ├── test/                          repo-level guards + the sanity Set-2 tests
-├── scripts/                       version pinning, code-list/translation generation, uninstall
+├── scripts/                       version pinning, code-list/translation generation and loading, uninstall
 ├── translation/domain.json        GENERATED — see scripts/generate-translations.py
 └── .github/workflows/            declares what to build; the logic is in openg2p-packaging
 ```
@@ -98,8 +104,12 @@ disability-registry/
 pytest test/test_rp_pin_lockstep.py test/test_metadata_consistency.py
 
 # regenerate after editing models/enums.py or the section metadata
-./scripts/generate-code-lists.py
+# (translations first: the code lists take their display names from them)
 ./scripts/generate-translations.py
+./scripts/generate-code-lists.py
+
+# give a Master Data the lists it lacks (dry run unless --apply; see master-data/README.md)
+./scripts/load-code-lists.py --lists master-data/disability
 
 # move the platform pin (chart + every Dockerfile together)
 ./scripts/bump-rp-version.sh -n        # preview

@@ -1,0 +1,78 @@
+{
+  "attribute_id": "HOUSING_TYPE",
+  "attribute_code": "HOUSING_TYPE",
+  "attribute_display": "Housing type",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "INDEPENDENT_HOME",
+      "value_code": "INDEPENDENT_HOME",
+      "value_display": "Independent home",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "FAMILY_HOME",
+      "value_code": "FAMILY_HOME",
+      "value_display": "Family home",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SUPPORTED_LIVING",
+      "value_code": "SUPPORTED_LIVING",
+      "value_display": "Supported living",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "GROUP_HOME",
+      "value_code": "GROUP_HOME",
+      "value_display": "Group home",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RESIDENTIAL_INSTITUTION",
+      "value_code": "RESIDENTIAL_INSTITUTION",
+      "value_display": "Residential institution",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HOSPITAL_LONG_STAY",
+      "value_code": "HOSPITAL_LONG_STAY",
+      "value_display": "Hospital long stay",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "TEMPORARY_SHELTER",
+      "value_code": "TEMPORARY_SHELTER",
+      "value_display": "Temporary shelter",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HOMELESS",
+      "value_code": "HOMELESS",
+      "value_display": "Homeless",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SOCIAL_HOUSING",
+      "value_code": "SOCIAL_HOUSING",
+      "value_display": "Social housing",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 10,
+      "display_i18n": {}
+    }
+  ]
+}

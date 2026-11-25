@@ -1,0 +1,85 @@
+{
+  "attribute_id": "CAREGIVER_RELATIONSHIP",
+  "attribute_code": "CAREGIVER_RELATIONSHIP",
+  "attribute_display": "Caregiver relationship",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "SPOUSE",
+      "value_code": "SPOUSE",
+      "value_display": "Spouse",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PARENT",
+      "value_code": "PARENT",
+      "value_display": "Parent",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "CHILD",
+      "value_code": "CHILD",
+      "value_display": "Child",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SIBLING",
+      "value_code": "SIBLING",
+      "value_display": "Sibling",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER_RELATIVE",
+      "value_code": "OTHER_RELATIVE",
+      "value_display": "Other relative",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "NEIGHBOUR",
+      "value_code": "NEIGHBOUR",
+      "value_display": "Neighbour",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "FRIEND",
+      "value_code": "FRIEND",
+      "value_display": "Friend",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PAID_CAREGIVER",
+      "value_code": "PAID_CAREGIVER",
+      "value_display": "Paid caregiver",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "COMMUNITY_VOLUNTEER",
+      "value_code": "COMMUNITY_VOLUNTEER",
+      "value_display": "Community volunteer",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "INSTITUTION",
+      "value_code": "INSTITUTION",
+      "value_display": "Institution",
+      "sort_order": 10,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 11,
+      "display_i18n": {}
+    }
+  ]
+}

@@ -61,9 +61,15 @@ a blank field, an empty dropdown, or a missing key in a shared record.
 failures into build failures; run it after any change here.
 
 **Code lists are generated.** The dropdown values in
-`meta_data/lookup-data/*_defaults.sql` are derived from `models/enums.py` by
-`./scripts/generate-code-lists.py`. Edit the enum, re-run the script. The same
-applies to `translation/domain.json` via `./scripts/generate-translations.py`.
+`meta_data/lookup-data/*_defaults.sql`, and the same lists in country-pack format
+in `master-data/disability/` at the repo root, are derived from `models/enums.py`
+by `./scripts/generate-code-lists.py`. Edit the enum, re-run the script. The same
+applies to `translation/domain.json` via `./scripts/generate-translations.py`,
+which is also where a dropdown value's display name comes from.
+
+**Dropdowns are read from Master Data, not from this registry's database.** The
+db-seed job cannot load the lists above; see `master-data/README.md` for how an
+environment gets them.
 
 **The standard's vocabulary is generated too.** The tables that translate our
 enums to the SPDCI code directories live in `models/dci_crosswalk.py` and are

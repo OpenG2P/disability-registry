@@ -1,0 +1,50 @@
+{
+  "attribute_id": "SUPPORT_STATUS",
+  "attribute_code": "SUPPORT_STATUS",
+  "attribute_display": "Support status",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "REQUIRED",
+      "value_code": "REQUIRED",
+      "value_display": "Required",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RECEIVING",
+      "value_code": "RECEIVING",
+      "value_display": "Receiving",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RECEIVED",
+      "value_code": "RECEIVED",
+      "value_display": "Received",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PARTIALLY_RECEIVED",
+      "value_code": "PARTIALLY_RECEIVED",
+      "value_display": "Partially received",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "NOT_REQUIRED",
+      "value_code": "NOT_REQUIRED",
+      "value_display": "Not required",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "DISCONTINUED",
+      "value_code": "DISCONTINUED",
+      "value_display": "Discontinued",
+      "sort_order": 6,
+      "display_i18n": {}
+    }
+  ]
+}

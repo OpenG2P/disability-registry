@@ -1,0 +1,106 @@
+{
+  "attribute_id": "HOUSING_SUPPORT_TYPE",
+  "attribute_code": "HOUSING_SUPPORT_TYPE",
+  "attribute_display": "Housing support type",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "RAMP_INSTALLATION",
+      "value_code": "RAMP_INSTALLATION",
+      "value_display": "Ramp installation",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HANDRAILS",
+      "value_code": "HANDRAILS",
+      "value_display": "Handrails",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "BATHROOM_MODIFICATION",
+      "value_code": "BATHROOM_MODIFICATION",
+      "value_display": "Bathroom modification",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "DOOR_WIDENING",
+      "value_code": "DOOR_WIDENING",
+      "value_display": "Door widening",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "GROUND_FLOOR_ALLOCATION",
+      "value_code": "GROUND_FLOOR_ALLOCATION",
+      "value_display": "Ground floor allocation",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RELOCATION",
+      "value_code": "RELOCATION",
+      "value_display": "Relocation",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RENT_SUBSIDY",
+      "value_code": "RENT_SUBSIDY",
+      "value_display": "Rent subsidy",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ACCESSIBLE_SOCIAL_HOUSING",
+      "value_code": "ACCESSIBLE_SOCIAL_HOUSING",
+      "value_display": "Accessible social housing",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ASSISTED_LIVING_FACILITY",
+      "value_code": "ASSISTED_LIVING_FACILITY",
+      "value_display": "Assisted living facility",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "RESIDENTIAL_CARE",
+      "value_code": "RESIDENTIAL_CARE",
+      "value_display": "Residential care",
+      "sort_order": 10,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HOME_REPAIR",
+      "value_code": "HOME_REPAIR",
+      "value_display": "Home repair",
+      "sort_order": 11,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HOME_ADAPTATION",
+      "value_code": "HOME_ADAPTATION",
+      "value_display": "Home adaptation",
+      "sort_order": 12,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "UTILITY_COST_SUPPORT",
+      "value_code": "UTILITY_COST_SUPPORT",
+      "value_display": "Utility cost support",
+      "sort_order": 13,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 14,
+      "display_i18n": {}
+    }
+  ]
+}

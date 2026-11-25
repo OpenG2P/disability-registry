@@ -1,0 +1,85 @@
+{
+  "attribute_id": "IMPAIRMENT_CAUSE",
+  "attribute_code": "IMPAIRMENT_CAUSE",
+  "attribute_display": "Impairment cause",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "CONGENITAL",
+      "value_code": "CONGENITAL",
+      "value_display": "Congenital",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ILLNESS",
+      "value_code": "ILLNESS",
+      "value_display": "Illness",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "WORK_ACCIDENT",
+      "value_code": "WORK_ACCIDENT",
+      "value_display": "Work accident",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ROAD_ACCIDENT",
+      "value_code": "ROAD_ACCIDENT",
+      "value_display": "Road accident",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER_ACCIDENT",
+      "value_code": "OTHER_ACCIDENT",
+      "value_display": "Other accident",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "CONFLICT_VIOLENCE",
+      "value_code": "CONFLICT_VIOLENCE",
+      "value_display": "Conflict or violence",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "NATURAL_DISASTER",
+      "value_code": "NATURAL_DISASTER",
+      "value_display": "Natural disaster",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "AGEING",
+      "value_code": "AGEING",
+      "value_display": "Ageing",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "MEDICAL_COMPLICATION",
+      "value_code": "MEDICAL_COMPLICATION",
+      "value_display": "Medical complication",
+      "sort_order": 9,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "UNKNOWN",
+      "value_code": "UNKNOWN",
+      "value_display": "Unknown",
+      "sort_order": 10,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 11,
+      "display_i18n": {}
+    }
+  ]
+}

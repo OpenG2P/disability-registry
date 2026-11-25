@@ -1,0 +1,71 @@
+{
+  "attribute_id": "REGISTRATION_CHANNEL",
+  "attribute_code": "REGISTRATION_CHANNEL",
+  "attribute_display": "Registration channel",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "SELF_REGISTRATION",
+      "value_code": "SELF_REGISTRATION",
+      "value_display": "Self registration",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "ASSISTED_REGISTRATION",
+      "value_code": "ASSISTED_REGISTRATION",
+      "value_display": "Assisted registration",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HOME_VISIT",
+      "value_code": "HOME_VISIT",
+      "value_display": "Home visit",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "HEALTH_FACILITY_REFERRAL",
+      "value_code": "HEALTH_FACILITY_REFERRAL",
+      "value_display": "Health facility referral",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SCHOOL_REFERRAL",
+      "value_code": "SCHOOL_REFERRAL",
+      "value_display": "School referral",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OPD_REFERRAL",
+      "value_code": "OPD_REFERRAL",
+      "value_display": "Referral from an organisation of persons with disabilities",
+      "sort_order": 6,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "SOCIAL_REGISTRY_TRANSFER",
+      "value_code": "SOCIAL_REGISTRY_TRANSFER",
+      "value_display": "Social registry transfer",
+      "sort_order": 7,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "CRVS_TRANSFER",
+      "value_code": "CRVS_TRANSFER",
+      "value_display": "CRVS transfer",
+      "sort_order": 8,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 9,
+      "display_i18n": {}
+    }
+  ]
+}

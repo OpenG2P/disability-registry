@@ -1,0 +1,50 @@
+{
+  "attribute_id": "PROVISION_SOURCE",
+  "attribute_code": "PROVISION_SOURCE",
+  "attribute_display": "Provision source",
+  "is_hierarchical": false,
+  "values": [
+    {
+      "value_id": "GOVERNMENT_PROGRAM",
+      "value_code": "GOVERNMENT_PROGRAM",
+      "value_display": "Government programme",
+      "sort_order": 1,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "NGO",
+      "value_code": "NGO",
+      "value_display": "NGO",
+      "sort_order": 2,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "INSURANCE",
+      "value_code": "INSURANCE",
+      "value_display": "Insurance",
+      "sort_order": 3,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "PRIVATE_PURCHASE",
+      "value_code": "PRIVATE_PURCHASE",
+      "value_display": "Private purchase",
+      "sort_order": 4,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "DONATION",
+      "value_code": "DONATION",
+      "value_display": "Donation",
+      "sort_order": 5,
+      "display_i18n": {}
+    },
+    {
+      "value_id": "OTHER",
+      "value_code": "OTHER",
+      "value_display": "Other",
+      "sort_order": 6,
+      "display_i18n": {}
+    }
+  ]
+}
