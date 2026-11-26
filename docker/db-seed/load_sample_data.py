@@ -153,6 +153,12 @@ def load_people() -> list[dict]:
 GEO_NAME_COLUMNS = ["country", "region", "district", "ward", "village"]
 
 _GEO_INDEX: dict[tuple[str, str], str] = {}
+# level_value_id -> (level_id, level_value_mnemonic) exactly as Master Data
+# holds them. The hierarchy written to a record must carry MDS's own level ids
+# (e.g. "l0", not the CSV column name "country") and spelling: the staff
+# portal's geo-hierarchy widget matches entries to levels by level_id, and a
+# record whose ids name no level renders an empty location.
+_GEO_UNITS: dict[str, tuple[str, str]] = {}
 _GEO_STATS = {"resolved": 0, "unresolved": 0}
 
 
@@ -176,13 +182,13 @@ def load_geo_index() -> dict[tuple[str, str], str]:
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "select level_value_id, level_value_mnemonic, coalesce(parent_level_value_id, '') "
+                "select level_value_id, level_value_mnemonic, coalesce(parent_level_value_id, ''), level_id "
                 "from g2p_geo_level_values"
             )
-            index = {
-                (parent, (name or "").strip().lower()): value_id
-                for value_id, name, parent in cur.fetchall()
-            }
+            index = {}
+            for value_id, name, parent, level_id in cur.fetchall():
+                index[(parent, (name or "").strip().lower())] = value_id
+                _GEO_UNITS[value_id] = (level_id, name)
     except Exception as exc:  # noqa: BLE001
         print(f"[load-sample-data] could not read master-data geo ({exc}) — no geography.")
         return {}
@@ -211,11 +217,12 @@ def resolve_geo(source: dict) -> tuple[str | None, dict | None]:
         value_id = _GEO_INDEX.get((parent, name.lower()))
         if value_id is None:
             break
+        level_id, mnemonic = _GEO_UNITS.get(value_id, (column, name))
         hierarchy.append(
             {
-                "level_id": column,
+                "level_id": level_id,
                 "level_value_id": value_id,
-                "level_value_mnemonic": name,
+                "level_value_mnemonic": mnemonic,
             }
         )
         parent = value_id
@@ -319,6 +326,17 @@ def insert_rows(cur, table: str, rows: list[dict], columns: dict[str, str]) -> i
     return len(values)
 
 
+# openg2p-data demography education value -> this registry's EDUCATION_LEVEL code
+# (meta_data/lookup-data/g2p_attribute_values_defaults.sql).
+DEMOGRAPHY_EDUCATION = {
+    "ILLITERATE": "NONE",
+    "CAN_READ_AND_WRITE": "PRIMARY",
+    "BASIC": "LOWER_SECONDARY",
+    "INTERMEDIARY": "UPPER_SECONDARY",
+    "HIGHER_EDUCATION": "TERTIARY",
+}
+
+
 def build_person(source: dict, profile: dict, columns: dict[str, str]) -> dict:
     """One person row, merging demography identity with the profile's disability."""
     source_id = str(source.get("functional_record_id") or source.get("internal_record_id") or "")
@@ -351,6 +369,13 @@ def build_person(source: dict, profile: dict, columns: dict[str, str]) -> dict:
             else "NONE",
         }
     )
+
+    # The shared demography set uses the platform's generic education vocabulary;
+    # this registry's EDUCATION_LEVEL list follows ISCED. Stored unmapped, the
+    # value matches no dropdown option and the record shows a raw code.
+    education = row.get("education_level")
+    if education:
+        row["education_level"] = DEMOGRAPHY_EDUCATION.get(education, education)
 
     # search_text is normally populated by SQLAlchemy event listeners, which do
     # NOT fire for raw SQL. Written explicitly here, and it carries the SOURCE
