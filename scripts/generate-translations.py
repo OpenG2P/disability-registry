@@ -35,6 +35,12 @@ import sys
 REPO = pathlib.Path(__file__).resolve().parent.parent
 EXT = REPO / "disability-extension/src/openg2p_registry_disability_extension"
 SECTIONS_SQL = EXT / "meta_data/register-metadata/g2p_register_sections.sql"
+TABS_SQL = EXT / "meta_data/register-metadata/g2p_register_ui_tabs.sql"
+SCHEMAS_SQL = EXT / "meta_data/register-metadata/g2p_register_schemas.sql"
+REGISTERS_SQL = EXT / "meta_data/register-metadata/g2p_register_definitions.sql"
+SCORES_SQL = EXT / "meta_data/register-metadata/g2p_register_score_definitions.sql"
+LOOKUP_DIR = EXT / "meta_data/lookup-data"
+CONFIG_SQL = EXT / "meta_data/registry-configurations/g2p_registry_configuration.sql"
 ENUMS = EXT / "register_domain/models/enums.py"
 LANGUAGES_SQL = EXT / "meta_data/registry-configurations/g2p_registry_languages.sql"
 DOMAIN_JSON = REPO / "translation/domain.json"
@@ -58,10 +64,12 @@ OVERRIDES = {
     "foundational_id_masked": "Foundational ID (masked)",
     "plus_code": "Plus Code",
     "geo_code_hierarchy_json": "Location",
-    "admin_level_1": "Administrative Level 1",
-    "admin_level_2": "Administrative Level 2",
-    "admin_level_3": "Administrative Level 3",
-    "admin_level_4": "Administrative Level 4",
+    "location": "Location",
+    # The register list page's breadcrumb is the lower-cased register mnemonic
+    # from the URL (/register/personwithdisability), looked up as a key.
+    "personwithdisability": "Person with Disability",
+    "SUPPORT_NEED": "Support Need",
+    "FOUNDATIONAL_ID_VERIFIED": "Foundational ID verified",
     "add_disability_detail": "Add Impairment",
     "add_human_assistance": "Add Human Assistance",
     "add_assistive_technology": "Add Assistive Technology",
@@ -93,6 +101,24 @@ TABLE_ACTIONS = [
 
 # Record lifecycle values the portal shows on every register.
 RECORD_STATUSES = ["ACTIVE", "INACTIVE", "ARCHIVED", "DRAFT", "PENDING"]
+
+# Labels the platform's record view and header pass through the translator with
+# no namespace. They are English already, so they translate to themselves; the
+# entry exists so the lookup resolves (and so another language can override it)
+# instead of logging MISSING_MESSAGE on every record view.
+PORTAL_LABELS = [
+    "Functional Record ID",
+    "Record Status",
+    "Status Reason",
+    "Created by",
+    "Created at",
+    "Last Approved by",
+    "Last Approved at",
+    "Not set",
+    # Edit forms: the dropdown placeholder and the change-reason prompt.
+    "Select",
+    "Enter Reason",
+]
 
 
 def sql_literals(text: str) -> list[str]:
@@ -153,6 +179,113 @@ def enum_keys() -> set[str]:
     return keys
 
 
+def insert_rows(path: pathlib.Path) -> list[dict[str, str | None]]:
+    """Rows of every `INSERT INTO ... (cols) VALUES (...), ...` in a seed file,
+    as column -> value. Literals are unquoted; NULL becomes None; numbers and
+    other bare tokens are kept as text. Enough for the flat seed files here."""
+    text = path.read_text()
+    rows: list[dict[str, str | None]] = []
+    for m in re.finditer(r"INSERT INTO\s+\S+\s*\(([^)]*)\)\s*VALUES", text, re.I):
+        columns = [c.strip().strip('"') for c in m.group(1).split(",")]
+        i, n = m.end(), len(text)
+        while i < n:
+            while i < n and text[i] in " \t\r\n,":
+                i += 1
+            if i >= n or text[i] != "(":
+                break  # ON CONFLICT ... — end of this VALUES list
+            i += 1
+            values: list[str | None] = []
+            while True:
+                while text[i] in " \t\r\n":
+                    i += 1
+                if text[i] == "'":
+                    j, buf = i + 1, []
+                    while True:
+                        if text[j] == "'":
+                            if text[j + 1] == "'":
+                                buf.append("'")
+                                j += 2
+                                continue
+                            break
+                        buf.append(text[j])
+                        j += 1
+                    values.append("".join(buf))
+                    i = j + 1
+                else:
+                    j = i
+                    while text[j] not in ",)":
+                        j += 1
+                    token = text[i:j].strip()
+                    values.append(None if token.upper() == "NULL" else token)
+                    i = j
+                while text[i] in " \t\r\n":
+                    i += 1
+                if text[i] == ",":
+                    i += 1
+                    continue
+                if text[i] == ")":
+                    i += 1
+                    break
+            rows.append(dict(zip(columns, values)))
+    return rows
+
+
+def tab_keys() -> set[str]:
+    """Tab labels are stored as keys (`person_tab`) and rendered through the
+    translator, exactly like section titles."""
+    return {r["tab_label"] for r in insert_rows(TABS_SQL) if r.get("tab_label")}
+
+
+def code_list_labels() -> dict[str, str]:
+    """value_code -> label for every code-list value the registry seeds,
+    including the platform lists (GENDER, MARITAL_STATUS, ...) that have no
+    enum here. Dropdowns show value_display and translate it, so the code must
+    be a key. A curated list whose display is already readable keeps it;
+    a generated one (display == code) is humanised."""
+    labels: dict[str, str] = {}
+    for path in sorted(LOOKUP_DIR.glob("g2p_attribute_values*.sql")):
+        for r in insert_rows(path):
+            code, display = r.get("value_code"), r.get("value_display")
+            if not code:
+                continue
+            if display and display != code and not display.isupper():
+                labels.setdefault(code, display)
+            else:
+                labels.setdefault(code, humanise(code))
+    return labels
+
+
+def list_field_labels() -> dict[str, str]:
+    """field_name -> display_label for the register list's result columns and
+    filters. The list page renders field_name through the translator, so a
+    field shown there but bound to no widget (functional_record_id) would
+    otherwise appear as the raw column name."""
+    labels: dict[str, str] = {}
+    for row in insert_rows(SCHEMAS_SQL):
+        for column in ("search_result_schema", "filter_schema"):
+            raw = row.get(column)
+            if not raw:
+                continue
+            for field in json.loads(raw):
+                name = field.get("field_name")
+                if name:
+                    labels.setdefault(name, field.get("display_label") or humanise(name))
+    return labels
+
+
+def score_type_keys() -> set[str]:
+    """The record's score widget shows each score_type through the translator."""
+    return {r["score_type"] for r in insert_rows(SCORES_SQL) if r.get("score_type")}
+
+
+def register_names() -> set[str]:
+    """Register subjects and the registry name are rendered through the
+    translator as-is (home tiles, breadcrumbs, the portal header)."""
+    names = {r["register_subject"] for r in insert_rows(REGISTERS_SQL) if r.get("register_subject")}
+    names |= {r["registry_name"] for r in insert_rows(CONFIG_SQL) if r.get("registry_name")}
+    return names
+
+
 def humanise(key: str) -> str:
     if key in OVERRIDES:
         return OVERRIDES[key]
@@ -170,20 +303,48 @@ def humanise(key: str) -> str:
 
 
 def build() -> dict[str, str]:
-    keys = ui_keys() | enum_keys() | set(TABLE_ACTIONS) | set(RECORD_STATUSES)
+    code_lists = code_list_labels()
+    list_fields = list_field_labels()
+    value_keys = enum_keys() | set(code_lists) | set(RECORD_STATUSES)
+    keys = (
+        ui_keys()
+        | tab_keys()
+        | set(list_fields)
+        | value_keys
+        | score_type_keys()
+        | set(TABLE_ACTIONS)
+        | {"personwithdisability"}
+    )
     existing: dict[str, str] = {}
     if DOMAIN_JSON.exists():
         existing = json.loads(DOMAIN_JSON.read_text())
 
+    tabs = tab_keys()
     result = {}
     for key in sorted(keys, key=str.lower):
         # An override always wins, so correcting a bad default here actually
-        # takes effect. Otherwise a human edit already in the file is kept.
+        # takes effect. Otherwise a human edit already in the file is kept,
+        # then a curated code-list display, then the humanised key.
         if key in OVERRIDES:
             result[key] = OVERRIDES[key]
+        elif key in tabs:
+            # person_tab -> "Person": the tab strip already says these are tabs.
+            result[key] = existing.get(key) or humanise(key.removesuffix("_tab"))
         else:
-            result[key] = existing.get(key) or humanise(key)
-    return result
+            result[key] = (
+                existing.get(key) or code_lists.get(key) or list_fields.get(key) or humanise(key)
+            )
+
+    # Strings that reach the translator already in their final, readable form:
+    # the portal's own record labels, register/registry names, and every label
+    # produced above — the read-only select/checkbox widgets and the edit forms
+    # translate a field or option label that was already translated once. Each
+    # maps to itself unless a human already gave it a different text.
+    identity = set(PORTAL_LABELS) | register_names() | set(result.values())
+    for label in sorted(identity, key=str.lower):
+        if label not in result:
+            result[label] = existing.get(label) or label
+    return dict(sorted(result.items(), key=lambda kv: kv[0].lower()))
 
 
 def sql_quote(value: str) -> str:
@@ -213,17 +374,25 @@ def render_languages_sql(translations: dict[str, str]) -> str:
         "-- Registry languages — GENERATED, do not hand-edit.\n"
         "--\n"
         "-- Regenerate with ./scripts/generate-translations.py, which derives the\n"
-        "-- domain_translation key set from the widget labels in\n"
-        "-- g2p_register_sections.sql and the values in models/enums.py. A key the\n"
-        "-- UI references but this row lacks is rendered raw in the staff portal.\n"
+        "-- domain_translation key set from the section widgets, tab labels, code\n"
+        "-- lists, score types and register names in this extension's metadata and\n"
+        "-- the values in models/enums.py. A key the UI references but this row\n"
+        "-- lacks is rendered raw in the staff portal and logged as MISSING_MESSAGE.\n"
         "--\n"
         "-- core_translation is left empty on purpose: the platform UI ships its own.\n"
         "-- Additional languages are added through the staff portal's language editor.\n"
+        "--\n"
+        "-- Re-running MERGES rather than skipping: keys added here reach an existing\n"
+        "-- install on upgrade, while any value already in the database (including\n"
+        "-- one edited in the staff portal) is kept.\n"
         'INSERT INTO "public"."registry_languages" ("language_id","language_code","language_label",'
         '"language_flag_base64","is_default","core_translation","domain_translation") VALUES \n'
         + ",\n".join(rows)
         + "\n"
-        + 'ON CONFLICT ("language_id") DO NOTHING;\n'
+        + 'ON CONFLICT ("language_id") DO UPDATE SET "domain_translation" = (\n'
+        + '    EXCLUDED."domain_translation"::jsonb\n'
+        + '    || COALESCE("registry_languages"."domain_translation"::jsonb, \'{}\'::jsonb)\n'
+        + ")::json;\n"
     )
 
 
